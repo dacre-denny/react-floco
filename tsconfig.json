@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "outDir": "./lib/",
+    "sourceMap": false,
+    "strict": true,
+    "target": "es5",
+    "jsx": "react",
+    "allowJs": false,
+    "lib": ["es2015"]
+  },
+  "include": ["src/index.ts"]
+}

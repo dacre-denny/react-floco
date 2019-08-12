@@ -1,0 +1,25 @@
+{
+  "name": "react-floco",
+  "version": "0.0.1",
+  "description": "Conditional rendering helpers for react",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "npm test"
+  },
+  "keywords": [
+    "react",
+    "rendering"
+  ],
+  "author": "Dacre Denny",
+  "license": "MIT",
+  "dependencies": {
+    "@types/react": "^16.9.1",
+    "react": "^16.9.0"
+  },
+  "devDependencies": {
+    "ts-loader": "^6.0.4",
+    "typescript": "^3.5.3"
+  }
+}
