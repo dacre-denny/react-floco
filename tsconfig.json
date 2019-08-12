@@ -1,12 +1,15 @@
 {
   "compilerOptions": {
-    "outDir": "./lib/",
+    "outFile": "lib/index.js",
     "sourceMap": false,
     "strict": true,
     "target": "es5",
     "jsx": "react",
     "allowJs": false,
-    "lib": ["es2015"]
+    "lib": ["es2015"],
+    "declaration": true,
+    "module": "amd",
+    "moduleResolution": "node"
   },
   "include": ["src/index.ts"]
 }
