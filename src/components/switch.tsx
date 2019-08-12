@@ -7,16 +7,14 @@ type SwitchProps<T> = Props & { value: T };
 
 export const Switch = <T extends any>(props: SwitchProps<T>) => {
   const caseChild = findChild<SwitchProps<T>>(props, child => child.type === Case && child.props.value === props.value);
-
   if (caseChild) {
     return <>{caseChild}</>;
-  } else {
-    const defaultChild = findChild(props, child => child.type === Default);
-
-    if (defaultChild) {
-      return <>{defaultChild.props.children}</>;
-    } else {
-      return null;
-    }
   }
+
+  const defaultChild = findChild(props, child => child.type === Default);
+  if (defaultChild) {
+    return <>{defaultChild.props.children}</>;
+  }
+
+  return null;
 };
