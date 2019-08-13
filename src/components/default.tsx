@@ -1,5 +1,2 @@
 import * as React from "react";
-
-export const Default = (props: any) => {
-  return <>{props.value}</>;
-};
+import { Props, ValueProp } from "../helpers";

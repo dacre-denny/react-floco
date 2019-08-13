@@ -1,5 +1,3 @@
-export { Default } from "./components/default";
-export { Switch } from "./components/switch";
-export { Case } from "./components/case";
+export { Switch, Case, Default } from "./components/switch";
 export { If } from "./components/if";
 export { Repeat } from "./components/repeat";
