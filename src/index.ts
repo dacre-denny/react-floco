@@ -1,3 +1,9 @@
-export { Switch, Case, Default } from "./components/switch";
-export { If } from "./components/if";
-export { Repeat } from "./components/repeat";
+import Library from "./lib";
+
+export const Switch = Library.Switch;
+export const Case = Library.Case;
+export const Default = Library.Default;
+export const If = Library.If;
+export const Repeat = Library.Repeat;
+
+export default Library;

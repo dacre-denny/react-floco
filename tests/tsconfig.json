@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "noEmit": true,
+    "target": "es5",
+    "jsx": "react",
+    "strict": true,
+    "module": "commonjs"
+  },
+  "include": ["./*.spec.ts", "./*.spec.tsx"]
+}

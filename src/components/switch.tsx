@@ -1,11 +1,11 @@
 import * as React from "react";
 import { Props, ValueProp, findChild } from "../helpers";
 
-interface CaseProps {
+export interface CaseProps {
   for: ValueProp;
 }
 
-interface SwitchProps {
+export interface SwitchProps {
   value: ValueProp;
 }
 
