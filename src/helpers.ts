@@ -1,3 +1,5 @@
+export type ValueProp = object | string | number;
+
 export interface Props {
   children?: React.ReactNode | React.ReactNode[];
 }

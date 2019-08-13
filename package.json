@@ -2,9 +2,11 @@
   "name": "react-floco",
   "version": "0.0.1",
   "description": "Conditional rendering helpers for react",
-  "main": "lib/index.js",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc --build --clean && tsc",
+    "prepublish": "npm run build",
     "dev": "tsc --watch",
     "test": "npm test"
   },
@@ -14,13 +16,17 @@
   ],
   "author": "Dacre Denny",
   "license": "MIT",
-  "dependencies": {
+  "devDependencies": {
     "@types/node": "^12.7.1",
     "@types/react": "^16.9.1",
-    "react": "^16.9.0"
-  },
-  "devDependencies": {
-    "ts-loader": "^6.0.4",
-    "typescript": "^3.5.3"
+    "@types/enzyme": "^3.10.3",
+    "@types/mocha": "^5.2.7",
+    "enzyme": "^3.10.0",
+    "enzyme-adapter-react-16": "^1.14.0",
+    "mocha": "^6.2.0",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0",
+    "typescript": "^3.5.3",
+    "tslint": "^5.18.0"
   }
 }
