@@ -22,8 +22,12 @@ export const Switch: React.SFC<SwitchProps> = props => {
     for (const child of children) {
       if (MatchCase(child, props.value)) {
         return <>{child}</>;
-      } else if (!defaultChild && MatchDefault(child)) {
-        defaultChild = <>{child.props.children}</>;
+      } else if (MatchDefault(child)) {
+        if (!defaultChild) {
+          defaultChild = <>{child.props.children}</>;
+        } else {
+          console.warn("Multiple Default child encountered in Switch. Only one Default should exist per Switch");
+        }
       } else {
         console.warn("Invalid child encountered in Switch. Only Case or Default should be used as children for Switch");
       }
