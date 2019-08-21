@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Props, ValueProp, findChild } from "../helpers";
+import { ValueProp } from "../helpers";
 
 export interface CaseProps {
   for: ValueProp;

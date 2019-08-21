@@ -8,6 +8,7 @@
     "build": "tsc --build --clean && tsc",
     "prepublish": "npm run build",
     "dev": "tsc --watch",
+    "tdd": "mocha -r ts-node/register -r tests/helpers --watch-extensions ts,tsx -b -w tests/*.spec.*",
     "test": "mocha -r ts-node/register -r tests/helpers -b tests/*.spec.*"
   },
   "keywords": [

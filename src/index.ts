@@ -1,9 +1,10 @@
-import Library from "./lib";
+import Components from "./components";
 
-export const Switch = Library.Switch;
-export const Case = Library.Case;
-export const Default = Library.Default;
-export const If = Library.If;
-export const Repeat = Library.Repeat;
+export const Switch = Components.Switch;
+export const Case = Components.Case;
+export const Default = Components.Default;
+export const If = Components.If;
+export const Else = Components.Else;
+export const Repeat = Components.Repeat;
 
-export default Library;
+export default Components;
