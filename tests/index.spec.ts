@@ -1,4 +1,4 @@
-import * as assert from "assert";
+import { assert } from "chai";
 import Components from "../src/components";
 import { Switch, Case, Default } from "../src/components/switch";
 import { Repeat } from "../src/components/repeat";
