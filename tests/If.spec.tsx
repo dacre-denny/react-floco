@@ -1,8 +1,8 @@
 import { assert } from "chai";
-import { mount, ReactWrapper } from "enzyme";
+import { mount } from "enzyme";
 import * as React from "react";
 import * as sinon from "sinon";
-import { If, Else } from "../src/components/if";
+import { Else, If } from "../src/components/if";
 
 describe("If", () => {
   afterEach(function() {
@@ -10,95 +10,81 @@ describe("If", () => {
   });
 
   it("should render nothing if no content specified", () => {
-    const assertNoChildren = () => {
-      assert.isTrue(wrapper.isEmptyRender());
-    };
-
     const wrapper = mount(<If condition={false} />);
 
-    assertNoChildren();
+    assert.isTrue(wrapper.isEmptyRender());
 
     wrapper.setProps({ condition: () => false });
-
-    assertNoChildren();
-
-    wrapper.setProps({ condition: true });
-
-    assertNoChildren();
-
-    wrapper.setProps({ condition: () => true });
-
-    assertNoChildren();
-  });
-
-  it("should render content when condition is true", () => {
-    const assertNoChildren = () => {
+    {
       assert.isTrue(wrapper.isEmptyRender());
-    };
-
-    const wrapper = mount(
-      <If condition={false}>
-        <p>foo</p>
-      </If>
-    );
-
-    assertNoChildren();
-
-    wrapper.setProps({ condition: () => false });
-
-    assertNoChildren();
+    }
 
     wrapper.setProps({ condition: true });
-
-    assert.lengthOf(wrapper.children(), 1);
-    assert.equal(wrapper.text(), "foo");
+    {
+      assert.isTrue(wrapper.isEmptyRender());
+    }
 
     wrapper.setProps({ condition: () => true });
-
-    assert.lengthOf(wrapper.children(), 1);
-    assert.equal(wrapper.text(), "foo");
+    {
+      assert.isTrue(wrapper.isEmptyRender());
+    }
   });
 
-  it("should render children when condition is true", () => {
-    const assertIfChildren = () => {
-      const children = wrapper.children();
-      assert.lengthOf(children, 2);
-      assert.equal(children.at(0).text(), "foo");
-      assert.equal(children.at(1).text(), "bar");
-    };
-
+  it("should only render children when condition has value of true", () => {
     const wrapper = mount(
       <If condition={false}>
         <p>foo</p>
-        <p>bar</p>
       </If>
     );
+
+    assert.isTrue(wrapper.isEmptyRender());
+
+    wrapper.setProps({ condition: true });
+    {
+      assert.lengthOf(wrapper.children(), 1);
+      assert.strictEqual(wrapper.childAt(0).text(), "foo");
+    }
 
     wrapper.setProps({ condition: false });
-
-    assert.isTrue(wrapper.isEmptyRender());
-
-    wrapper.setProps({ condition: () => false });
-
-    assert.isTrue(wrapper.isEmptyRender());
+    {
+      assert.isTrue(wrapper.isEmptyRender());
+    }
 
     wrapper.setProps({ condition: true });
-
-    assertIfChildren();
-
-    wrapper.setProps({ condition: () => true });
-
-    assertIfChildren();
+    {
+      assert.lengthOf(wrapper.children(), 1);
+      assert.strictEqual(wrapper.childAt(0).text(), "foo");
+    }
   });
 
-  it("should render Else children if condition is false", () => {
-    const assertElseChildren = () => {
-      const children = wrapper.children();
-      assert.lengthOf(children, 2);
-      assert.equal(children.at(0).text(), "bar");
-      assert.equal(children.at(1).text(), "was");
-    };
+  it("should only render children when condition as function evaluates true", () => {
+    const wrapper = mount(
+      <If condition={() => false}>
+        <p>foo</p>
+      </If>
+    );
 
+    assert.isTrue(wrapper.isEmptyRender());
+
+    wrapper.setProps({ condition: () => true });
+    {
+      assert.lengthOf(wrapper.children(), 1);
+      assert.strictEqual(wrapper.childAt(0).text(), "foo");
+    }
+
+    wrapper.setProps({ condition: () => false });
+    {
+      assert.isTrue(wrapper.isEmptyRender());
+    }
+
+    wrapper.setProps({ condition: () => true });
+    {
+      assert.lengthOf(wrapper.children(), 1);
+      assert.strictEqual(wrapper.childAt(0).text(), "foo");
+    }
+  });
+
+  it("should only render children of Else if condition is false", () => {
     const wrapper = mount(
       <If condition={false}>
         <p>foo</p>
@@ -108,22 +94,18 @@ describe("If", () => {
       </If>
     );
 
-    assertElseChildren();
+    assert.lengthOf(wrapper.children(), 2);
+    assert.equal(wrapper.childAt(0).text(), "bar");
+    assert.equal(wrapper.childAt(1).text(), "was");
 
     wrapper.setProps({ condition: () => false });
 
-    assertElseChildren();
+    assert.lengthOf(wrapper.children(), 2);
+    assert.equal(wrapper.childAt(0).text(), "bar");
+    assert.equal(wrapper.childAt(1).text(), "was");
   });
 
-  it("should render non-Else children if condition is true", () => {
-    const assertIfChildren = () => {
-      const children = wrapper.children();
-
-      assert.lengthOf(children, 2);
-      assert.equal(children.at(0).text(), "foo");
-      assert.equal(children.at(1).text(), "here");
-    };
-
+  it("should only render children of non-Else if condition is true", () => {
     const wrapper = mount(
       <If condition={true}>
         <p>foo</p>
@@ -133,10 +115,14 @@ describe("If", () => {
       </If>
     );
 
-    assertIfChildren();
+    assert.lengthOf(wrapper.children(), 2);
+    assert.equal(wrapper.childAt(0).text(), "foo");
+    assert.equal(wrapper.childAt(1).text(), "here");
 
     wrapper.setProps({ condition: () => true });
 
-    assertIfChildren();
+    assert.lengthOf(wrapper.children(), 2);
+    assert.equal(wrapper.childAt(0).text(), "foo");
+    assert.equal(wrapper.childAt(1).text(), "here");
   });
 });
