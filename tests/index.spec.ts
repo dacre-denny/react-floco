@@ -2,7 +2,7 @@ import { assert } from "chai";
 import Components from "../src/components";
 import { Switch, Case, Default } from "../src/components/switch";
 import { Repeat } from "../src/components/repeat";
-import { If } from "../src/components/if";
+import { If, Else } from "../src/components/if";
 import * as API from "../src/index";
 
 describe("Floco API", () => {
@@ -15,6 +15,7 @@ describe("Floco API", () => {
     assert.strictEqual(API.Case, Case);
     assert.strictEqual(API.Switch, Switch);
     assert.strictEqual(API.If, If);
+    assert.strictEqual(API.Else, Else);
     assert.strictEqual(API.Repeat, Repeat);
   });
 });

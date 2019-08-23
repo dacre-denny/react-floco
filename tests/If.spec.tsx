@@ -84,7 +84,7 @@ describe("If", () => {
     }
   });
 
-  it("should only render children of Else if condition is false", () => {
+  it("should only render children of Else component(s) if condition is false", () => {
     const wrapper = mount(
       <If condition={false}>
         <p>foo</p>
@@ -98,14 +98,14 @@ describe("If", () => {
     assert.equal(wrapper.childAt(0).text(), "bar");
     assert.equal(wrapper.childAt(1).text(), "was");
 
-    wrapper.setProps({ condition: () => false });
+    wrapper.setProps({ condition: false });
 
     assert.lengthOf(wrapper.children(), 2);
     assert.equal(wrapper.childAt(0).text(), "bar");
     assert.equal(wrapper.childAt(1).text(), "was");
   });
 
-  it("should only render children of non-Else if condition is true", () => {
+  it("should only render non-Else children if condition is true", () => {
     const wrapper = mount(
       <If condition={true}>
         <p>foo</p>
@@ -119,10 +119,27 @@ describe("If", () => {
     assert.equal(wrapper.childAt(0).text(), "foo");
     assert.equal(wrapper.childAt(1).text(), "here");
 
-    wrapper.setProps({ condition: () => true });
+    wrapper.setProps({ condition: true });
 
     assert.lengthOf(wrapper.children(), 2);
     assert.equal(wrapper.childAt(0).text(), "foo");
     assert.equal(wrapper.childAt(1).text(), "here");
+  });
+
+  it("should not affect the Else descendants of children", () => {
+    const wrapper = mount(
+      <If condition={true}>
+        <div>
+          <p>foo</p>
+          <Else>
+            <p>bar</p>
+            <Else>was</Else>
+          </Else>
+          <p>here</p>
+        </div>
+      </If>
+    );
+
+    assert.strictEqual(wrapper.text(), "foobarwashere");
   });
 });
