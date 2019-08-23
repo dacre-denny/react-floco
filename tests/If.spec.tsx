@@ -99,10 +99,11 @@ describe("If", () => {
     assert.equal(wrapper.childAt(1).text(), "was");
 
     wrapper.setProps({ condition: false });
-
-    assert.lengthOf(wrapper.children(), 2);
-    assert.equal(wrapper.childAt(0).text(), "bar");
-    assert.equal(wrapper.childAt(1).text(), "was");
+    {
+      assert.lengthOf(wrapper.children(), 2);
+      assert.equal(wrapper.childAt(0).text(), "bar");
+      assert.equal(wrapper.childAt(1).text(), "was");
+    }
   });
 
   it("should only render non-Else children if condition is true", () => {
@@ -120,13 +121,14 @@ describe("If", () => {
     assert.equal(wrapper.childAt(1).text(), "here");
 
     wrapper.setProps({ condition: true });
-
-    assert.lengthOf(wrapper.children(), 2);
-    assert.equal(wrapper.childAt(0).text(), "foo");
-    assert.equal(wrapper.childAt(1).text(), "here");
+    {
+      assert.lengthOf(wrapper.children(), 2);
+      assert.equal(wrapper.childAt(0).text(), "foo");
+      assert.equal(wrapper.childAt(1).text(), "here");
+    }
   });
 
-  it("should not affect the Else descendants of children", () => {
+  it("should not affect rendering content in Else components that are not direct children", () => {
     const wrapper = mount(
       <If condition={true}>
         <div>

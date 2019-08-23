@@ -108,36 +108,25 @@ describe("Switch", () => {
     }
   });
 
-  it("should render nested case", () => {
+  it("should not affect rendering content in Case or Default components that are not direct children", () => {
     const warnStub = sinon.stub(console, "warn");
-    const NestedSwitches = (props: any) => (
-      <Switch value={props.value}>
+    const wrapper = mount(
+      <Switch value={1}>
         <Case for={1}>
-          <Switch value={props.nestedValue}>
-            <Case for="a">case a</Case>
+          <Case for="a">
+            <p>case a</p>
             <Case for="b">case b</Case>
             <Default>nested default</Default>
-          </Switch>
+          </Case>
         </Case>
         <Case for={2}>case 2</Case>
         <Default>default</Default>
       </Switch>
     );
 
-    const wrapper = mount(<NestedSwitches />);
-
-    wrapper.setProps({ value: 1, nestedValue: "a" });
-    {
-      assert.lengthOf(wrapper.children(), 1);
-      assert.equal(wrapper.text(), "case a");
-      assert.isFalse(warnStub.called);
-    }
-
-    wrapper.setProps({ value: 1, nestedValue: "b" });
-    {
-      assert.equal(wrapper.text(), "case b");
-      assert.isFalse(warnStub.called);
-    }
+    assert.lengthOf(wrapper.children(), 1);
+    assert.equal(wrapper.text(), "case acase bnested default");
+    assert.isFalse(warnStub.called);
 
     wrapper.setProps({ value: 2 });
     {
