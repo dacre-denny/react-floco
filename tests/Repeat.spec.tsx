@@ -9,49 +9,31 @@ describe("Repeat", () => {
     sinon.restore();
   });
 
-  it("should render nothing if no content specified", () => {
-    const assertNoChildren = () => {
-      assert.isTrue(wrapper.isEmptyRender());
-    };
-
-    const wrapper = mount(<Repeat times={5} />);
-
-    assertNoChildren();
-
-    wrapper.setProps({ times: 1 });
-
-    assertNoChildren();
-
-    wrapper.setProps({ times: 41 });
-
-    assertNoChildren();
-
-    wrapper.setProps({ times: 22 });
-
-    assertNoChildren();
-  });
-
   it("should render number of children matching times prop", () => {
-    const assertNoChildren = (count: number) => {
+    const assertChildren = (count: number) => {
       assert.lengthOf(wrapper.children(), count);
-      assert.isTrue(wrapper.children().everyWhere(child => child.text() === "foo"));
+
+      wrapper.children().forEach(child => {
+        assert.strictEqual(child.text(), "foo");
+        assert.strictEqual(child.type(), "p");
+      });
     };
 
-    const wrapper = mount(<Repeat times={5}>foo</Repeat>);
+    const wrapper = mount(<Repeat times={5}>{props => <p {...props}>foo</p>}</Repeat>);
 
-    assertNoChildren(5);
+    assertChildren(5);
 
     wrapper.setProps({ times: 1 });
 
-    assertNoChildren(1);
+    assertChildren(1);
 
     wrapper.setProps({ times: 11 });
 
-    assertNoChildren(11);
+    assertChildren(11);
 
     wrapper.setProps({ times: 3 });
 
-    assertNoChildren(3);
+    assertChildren(3);
   });
 
   it("should render no children for zero times prop", () => {
@@ -59,7 +41,7 @@ describe("Repeat", () => {
       assert.isTrue(wrapper.isEmptyRender());
     };
 
-    const wrapper = mount(<Repeat times={0}>foo</Repeat>);
+    const wrapper = mount(<Repeat times={0}>{props => <p {...props}>foo</p>}</Repeat>);
 
     assertNoChildren();
   });
@@ -69,16 +51,38 @@ describe("Repeat", () => {
       assert.isTrue(wrapper.isEmptyRender());
     };
 
-    const wrapper = mount(<Repeat times={-15}>foo</Repeat>);
+    const wrapper = mount(<Repeat times={-15}>{props => <p {...props}>foo</p>}</Repeat>);
 
     assertNoChildren();
+  });
 
-    wrapper.setProps({ times: -1 });
+  it("should pass props through to rendered children", () => {
+    const assertChildren = (count: number) => {
+      assert.lengthOf(wrapper.children(), count);
 
-    assertNoChildren();
+      wrapper.children().forEach(child => {
+        assert.strictEqual(child.text(), "bar");
+        assert.strictEqual(child.type(), "p");
+        assert.strictEqual(child.prop("foo"), "bar");
+        assert.strictEqual(child.prop("was"), 1);
+        assert.strictEqual(child.prop("here"), null);
+      });
+    };
 
-    wrapper.setProps({ times: -7 });
+    const wrapper = mount(
+      <Repeat foo={"bar"} was={1} here={null} times={5}>
+        {props => <p {...props}>{props.foo}</p>}
+      </Repeat>
+    );
 
-    assertNoChildren();
+    assertChildren(5);
+
+    wrapper.setProps({ times: 7 });
+
+    assertChildren(7);
+
+    wrapper.setProps({ times: 21 });
+
+    assertChildren(21);
   });
 });
