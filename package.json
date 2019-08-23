@@ -6,10 +6,15 @@
   "typings": "dist/index.d.ts",
   "scripts": {
     "build": "tsc --build --clean && tsc",
-    "prepublish": "npm run build",
+    "prepublish": "npm run test && npm run build",
     "dev": "tsc --watch",
     "tdd": "mocha -r ts-node/register -r tests/helpers --watch-extensions ts,tsx -b -w tests/*.spec.*",
     "test": "mocha -r ts-node/register -r tests/helpers -b tests/*.spec.*"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run test && npm run build"
+    }
   },
   "keywords": [
     "react",
@@ -34,7 +39,8 @@
     "tslint": "^5.18.0",
     "jsdom": "^15.1.1",
     "chai": "^4.2.0",
-    "sinon": "^7.4.1"
+    "sinon": "^7.4.1",
+    "husky": "^3.0.4"
   },
   "dependencies": {}
 }
