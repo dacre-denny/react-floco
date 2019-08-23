@@ -1,26 +1,47 @@
 import * as React from "react";
-import { Props, isFunction } from "../helpers";
+import { PropsWithChildren } from "react";
+import { Else } from "./else";
+import { isFunction } from "../helpers";
 
-type Condition<T> = (() => boolean) | boolean;
-type IfProps<T> = Props & { condition: Condition<T> };
-type ElseProps = Props;
+type BooleanFunction = () => boolean;
+type Condition = BooleanFunction | boolean;
+type IfProps = { condition: Condition };
 
-const MatchElse = (element: React.ReactElement<ElseProps>): boolean => element.type === Else;
+const conditionMet = (condition: Condition): boolean => (isFunction(condition) ? (condition as BooleanFunction)() : condition) === true;
 
-export const If = <T extends object>(props: IfProps<T>) => {
-  if (props.children) {
-    const children = (Array.isArray(props.children) ? props.children : [props.children]) as React.ReactElement[];
+const isTypeElse = (element: React.ReactNode): boolean => !!element && (element as React.ReactElement).type === Else;
 
-    if ((isFunction(props.condition) && (props.condition as () => boolean)()) || props.condition === true) {
-      return <>{children.filter(child => !MatchElse(child))}</>;
+const isTypeNotElse = (element: React.ReactNode): boolean => !!element && (element as React.ReactElement).type !== Else;
+
+/**
+ * If component provides conditional rendering of inner content when condition prop:
+ * - is an expression that evaluates to true
+ * - is a function that returns true when invoked
+ *
+ * If this component has Else child components, the content of these children will be
+ * rendered if the condition prop is not satisfied.
+ *
+ * @param props
+ */
+export const If: React.SFC<PropsWithChildren<IfProps>> = props => {
+  const { children, condition } = props;
+
+  if (Array.isArray(children)) {
+    if (conditionMet(condition)) {
+      return <>{children.filter(isTypeNotElse)}</>;
     } else {
-      return <>{children.filter(MatchElse)}</>;
+      return <>{children.filter(isTypeElse)}</>;
+    }
+  }
+
+  if (children) {
+    if (conditionMet(condition) && isTypeNotElse(children)) {
+      return <>{children}</>;
+    }
+    if (isTypeElse(children)) {
+      return <>{children}</>;
     }
   }
 
   return null;
-};
-
-export const Else = <T extends object>(props: ElseProps) => {
-  return <>{props.children}</>;
 };

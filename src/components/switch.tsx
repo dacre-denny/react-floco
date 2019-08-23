@@ -1,37 +1,50 @@
 import * as React from "react";
-import { Props, ValueProp } from "../helpers";
+import { Default, isTypeDefault } from "./default";
+import { Case, isTypeCaseMatch } from "./case";
+import { SwitchValue } from "../helpers";
 
-type CaseProps = { for: ValueProp };
-type SwitchProps = Props & { value: ValueProp };
+type SwitchProps = { value: SwitchValue };
 
-const MatchCase = (element: React.ReactElement<CaseProps>, value: any): boolean => element.type === Case && element.props.for === value;
+const isTypeSupported = (element: React.ReactNode): boolean => !!element && ((element as React.ReactElement).type === Default || (element as React.ReactElement).type === Case);
 
-const MatchDefault = (element: React.ReactElement): boolean => element.type === Default;
+/**
+ * Switch component provides conditional rendering of inner content for Case blocks that
+ * match on the specified value prop.
+ *
+ * If a strict match occurs between the Switch value and one or more Case children, then
+ * the inner content of those Case components is rendered.
+ *
+ * If no matching case is found, and Default children are present in the Switch block, the
+ * contents of those components is rendered.
+ *
+ * @param props
+ */
+export const Switch = (props: React.PropsWithChildren<SwitchProps>): React.ReactElement | null => {
+  const { children, value } = props;
 
-export const Switch = (props: SwitchProps) => {
-  if (props.children) {
-    const children = (Array.isArray(props.children) ? props.children : [props.children]) as React.ReactElement[];
-
-    if (children.some(child => child.type !== Default && child.type !== Case)) {
-      console.warn(`Switch: unexpected child type. Switch only supports child components that are Case or Default`);
+  if (Array.isArray(children)) {
+    if (!children.some(isTypeSupported)) {
+      console.warn(`Switch: only Case or Default children are supported`);
     }
 
-    const cases = children.filter(child => MatchCase(child, props.value));
-
-    if (cases.length > 0) {
-      return <>{cases}</>;
+    const matchedCases = children.filter(isTypeCaseMatch(value));
+    if (matchedCases.length > 0) {
+      return <>{matchedCases}</>;
     }
 
-    return <>{children.filter(MatchDefault)}</>;
+    const defaults = children.filter(isTypeDefault);
+    if (defaults.length > 0) {
+      return <>{defaults}</>;
+    }
+  } else if (children) {
+    if (!isTypeSupported(children)) {
+      console.warn(`Switch: only Case or Default children are supported`);
+    }
+
+    if (isTypeCaseMatch(value)(children) || isTypeDefault(children)) {
+      return <>{children}</>;
+    }
   }
 
   return null;
-};
-
-export const Case: React.SFC<CaseProps> = props => {
-  return <>{props.children}</>;
-};
-
-export const Default: React.SFC = props => {
-  return <>{props.children}</>;
 };

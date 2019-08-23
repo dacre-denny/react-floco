@@ -4,28 +4,18 @@ var React = require("react");
 var MatchCase = function (element, value) { return element.type === exports.Case && element.props.for === value; };
 var MatchDefault = function (element) { return element.type === exports.Default; };
 exports.Switch = function (props) {
-    var defaultChild = null;
     if (props.children) {
         var children = (Array.isArray(props.children) ? props.children : [props.children]);
-        for (var _i = 0, children_1 = children; _i < children_1.length; _i++) {
-            var child = children_1[_i];
-            if (MatchCase(child, props.value)) {
-                return React.createElement(React.Fragment, null, child);
-            }
-            else if (MatchDefault(child)) {
-                if (!defaultChild) {
-                    defaultChild = React.createElement(React.Fragment, null, child.props.children);
-                }
-                else {
-                    console.warn("Multiple Default child encountered in Switch. Only one Default should exist per Switch");
-                }
-            }
-            else {
-                console.warn("Invalid child encountered in Switch. Only Case or Default should be used as children for Switch");
-            }
+        if (children.some(function (child) { return child.type !== exports.Default && child.type !== exports.Case; })) {
+            console.warn("Switch: unexpected child type. Switch only supports child components that are Case or Default");
         }
+        var cases = children.filter(function (child) { return MatchCase(child, props.value); });
+        if (cases.length > 0) {
+            return React.createElement(React.Fragment, null, cases);
+        }
+        return React.createElement(React.Fragment, null, children.filter(MatchDefault));
     }
-    return React.createElement(React.Fragment, null, defaultChild);
+    return null;
 };
 exports.Case = function (props) {
     return React.createElement(React.Fragment, null, props.children);

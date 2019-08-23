@@ -1,0 +1,21 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "extends": ["eslint:recommended", "plugin:react/recommended", "plugin:@typescript-eslint/eslint-recommended", "plugin:@typescript-eslint/recommended"],
+  "plugins": ["@typescript-eslint"],
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "rules": {
+    "react/jsx-uses-react": 1,
+    "react/prop-types": 0
+  },
+  "settings": {
+    "react": {
+      "version": "latest"
+    }
+  }
+}

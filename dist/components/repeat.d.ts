@@ -1,7 +1,10 @@
-/// <reference types="react" />
-import { Props } from "../helpers";
-declare type RepeatProps = Props & {
+import * as React from "react";
+declare type RenderFunction<T> = (props: {
+    key: number;
+} & T) => React.ReactElement;
+declare type RepeatProps<T> = {
     times: number;
-};
-export declare const Repeat: (props: RepeatProps) => JSX.Element | null;
+    children: RenderFunction<T>;
+} & T;
+export declare const Repeat: <T extends object>(props: RepeatProps<T>) => JSX.Element | null;
 export {};

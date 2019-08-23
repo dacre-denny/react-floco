@@ -1,11 +1,12 @@
 import * as React from "react";
-import { ValueProp } from "../helpers";
-export interface CaseProps {
+import { Props, ValueProp } from "../helpers";
+declare type CaseProps = {
     for: ValueProp;
-}
-export interface SwitchProps {
+};
+declare type SwitchProps = Props & {
     value: ValueProp;
-}
-export declare const Switch: React.SFC<SwitchProps>;
+};
+export declare const Switch: (props: SwitchProps) => JSX.Element | null;
 export declare const Case: React.SFC<CaseProps>;
 export declare const Default: React.SFC;
+export {};

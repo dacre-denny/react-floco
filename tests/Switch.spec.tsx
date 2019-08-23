@@ -2,7 +2,9 @@ import { assert } from "chai";
 import { mount } from "enzyme";
 import * as React from "react";
 import * as sinon from "sinon";
-import { Case, Default, Switch } from "../src/components/switch";
+import { Switch } from "../src/components/switch";
+import { Default } from "../src/components/default";
+import { Case } from "../src/components/case";
 
 describe("Switch", () => {
   afterEach(function() {

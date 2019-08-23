@@ -2,7 +2,8 @@ import { assert } from "chai";
 import { mount } from "enzyme";
 import * as React from "react";
 import * as sinon from "sinon";
-import { Else, If } from "../src/components/if";
+import { If } from "../src/components/if";
+import { Else } from "../src/components/else";
 
 describe("If", () => {
   afterEach(function() {
@@ -59,7 +60,7 @@ describe("If", () => {
 
   it("should only render children when condition as function evaluates true", () => {
     const wrapper = mount(
-      <If condition={() => false}>
+      <If condition={(): boolean => false}>
         <p>foo</p>
       </If>
     );

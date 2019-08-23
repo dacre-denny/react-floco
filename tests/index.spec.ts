@@ -1,8 +1,11 @@
 import { assert } from "chai";
 import Components from "../src/components";
-import { Switch, Case, Default } from "../src/components/switch";
+import { Switch } from "../src/components/switch";
+import { Default } from "../src/components/default";
+import { Case } from "../src/components/case";
 import { Repeat } from "../src/components/repeat";
-import { If, Else } from "../src/components/if";
+import { If } from "../src/components/if";
+import { Else } from "../src/components/else";
 import * as API from "../src/index";
 
 describe("Floco API", () => {
