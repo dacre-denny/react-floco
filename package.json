@@ -6,7 +6,7 @@
   "typings": "dist/index.d.ts",
   "scripts": {
     "build": "tsc --build --clean && tsc",
-    "prepublish": "npm run lint && npm run test && npm run build",
+    "prepublishOnly": "npm run lint && npm run test && npm run build",
     "lint": "eslint . --ext .ts,.tsx",
     "dev": "tsc --watch",
     "tdd": "mocha -r ts-node/register -r tests/helpers --watch-extensions ts,tsx -b -w tests/*.spec.*",
@@ -19,7 +19,8 @@
     }
   },
   "eslintIgnore": [
-    "dist"
+    "dist",
+    "examples"
   ],
   "keywords": [
     "react",
@@ -40,6 +41,7 @@
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.14.0",
     "eslint": "^6.2.1",
+    "eslint-plugin-react": "^7.14.3",
     "husky": "^3.0.4",
     "jsdom": "^15.1.1",
     "mocha": "^6.2.0",
@@ -48,9 +50,10 @@
     "sinon": "^7.4.1",
     "ts-node": "^8.3.0",
     "tslint": "^5.18.0",
-    "typescript": "^3.5.3"
+    "typescript": "^3.5.3",
+    "eslint-watch": "^6.0.0"
   },
   "dependencies": {
-    "eslint-watch": "^6.0.0"
+    "floco-js-example": "file:examples/js-example"
   }
 }
