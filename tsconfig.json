@@ -4,9 +4,10 @@
     "target": "es5",
     "lib": ["es2015", "dom"],
     "jsx": "react",
-    "strict": true,
+    "strict": false,
     "declaration": true,
     "module": "commonjs"
   },
-  "include": ["./src/**/*.ts", "./src/**/*.tsx", "./tests/**/*.ts", "./tests/**/*.tsx"]
+  "include": ["./src/index.ts", "./tests/**/*.tsx", "./tests/**/*.ts"],
+  "exclude": ["node_modules"]
 }

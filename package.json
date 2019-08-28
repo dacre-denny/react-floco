@@ -6,6 +6,7 @@
   "typings": "dist/index.d.ts",
   "scripts": {
     "build": "tsc --build --clean && tsc",
+    "postinstall": "npm run build",
     "prepublishOnly": "npm run lint && npm run test && npm run build",
     "lint": "eslint . --ext .ts,.tsx",
     "dev": "tsc --watch",
@@ -53,7 +54,5 @@
     "typescript": "^3.5.3",
     "eslint-watch": "^6.0.0"
   },
-  "dependencies": {
-    "floco-js-example": "file:examples/js-example"
-  }
+  "dependencies": {}
 }

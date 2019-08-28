@@ -1,34 +1,31 @@
-FROM node:8-alpine
+FROM node:8
 
-WORKDIR /workbench
+# Install global packages
+RUN npm install -g http-server
+RUN npm install -g typescript
 
-RUN apk add git
+COPY . /react-floco
 
-COPY . react-floco
+# Build react-floco
+WORKDIR /react-floco
+RUN npm install
+RUN npm run build
 
-RUN cp -r react-floco/examples . \
-    && rm -rf react-floco/examples
+COPY examples /examples
 
-RUN cd react-floco \
-    && npm install \
-    && npm run build
+# Build js-example
+WORKDIR /examples/js-example
+RUN npm install
+RUN mkdir -p node_modules/react-floco/
+RUN cp -a ../../react-floco/.  node_modules/react-floco/
+RUN npm run build
 
-RUN cd examples/js-example \
-    && npm install
+# Build ts-example
+WORKDIR /examples/ts-example
+RUN npm install
+RUN mkdir -p node_modules/react-floco/
+RUN cp -a ../../react-floco/.  node_modules/react-floco/
+RUN npm run build
 
-RUN mkdir -p examples/js-example/node_modules/react-floco/ \
-    && cp -a react-floco/. examples/js-example/node_modules/react-floco/
-
-RUN cd examples/js-example \
-    && ls node_modules/react-floco \
-    && npm run build
-
-# RUN cp -a react-floco/. examples/js-example/node_modules/react-floco \
-#     && ls examples/js-example/node_modules/react-floco/dist \
-#     && cd examples/js-example \
-#     && npm run build
-
-#RUN cd examples/js-example \
-#    && npm run build
-
-ENTRYPOINT [ "npm","-v"]
+WORKDIR /examples
+ENTRYPOINT [ "http-server", "-p", "8080" ]

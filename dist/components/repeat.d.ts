@@ -6,5 +6,10 @@ declare type RepeatProps<T> = {
     times: number;
     children: RenderFunction<T>;
 } & T;
-export declare const Repeat: <T extends object>(props: RepeatProps<T>) => JSX.Element | null;
+/**
+ * Repeats rendering of inner content by number specified on times prop.
+ *
+ * @param props
+ */
+export declare const Repeat: <T extends object>(props: RepeatProps<T>) => React.ReactElement<any, string | ((props: any) => React.ReactElement<any, string | any | (new (props: any) => React.Component<any, any, any>)>) | (new (props: any) => React.Component<any, any, any>)>;
 export {};

@@ -1,12 +1,18 @@
 import * as React from "react";
-import { Props, ValueProp } from "../helpers";
-declare type CaseProps = {
-    for: ValueProp;
+import { SwitchValue } from "../helpers";
+export declare type SwitchProps = {
+    value: SwitchValue;
 };
-declare type SwitchProps = Props & {
-    value: ValueProp;
-};
-export declare const Switch: (props: SwitchProps) => JSX.Element | null;
-export declare const Case: React.SFC<CaseProps>;
-export declare const Default: React.SFC;
-export {};
+/**
+ * Switch component provides conditional rendering of inner content for Case blocks that
+ * match on the specified value prop.
+ *
+ * If a strict match occurs between the Switch value and one or more Case children, then
+ * the inner content of those Case components is rendered.
+ *
+ * If no matching case is found, and Default children are present in the Switch block, the
+ * contents of those components is rendered.
+ *
+ * @param props
+ */
+export declare const Switch: (props: React.PropsWithChildren<SwitchProps>) => React.ReactElement<any, string | ((props: any) => React.ReactElement<any, string | any | (new (props: any) => React.Component<any, any, any>)>) | (new (props: any) => React.Component<any, any, any>)>;
