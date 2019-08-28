@@ -3,7 +3,7 @@ import { Default, isTypeDefault } from "./default";
 import { Case, isTypeCaseMatch } from "./case";
 import { SwitchValue } from "../helpers";
 
-export type SwitchProps = { value: SwitchValue };
+type SwitchProps = { value: SwitchValue };
 
 const isTypeSupported = (element: React.ReactNode): boolean => !!element && ((element as React.ReactElement).type === Default || (element as React.ReactElement).type === Case);
 

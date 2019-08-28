@@ -29,4 +29,4 @@ RUN cp -a ../../react-floco/.  node_modules/react-floco/
 RUN npm run build
 
 WORKDIR /examples
-ENTRYPOINT [ "http-server", "-p", "8080" ]
+ENTRYPOINT [ "http-server", "-p", "80" ]
