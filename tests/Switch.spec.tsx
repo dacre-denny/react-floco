@@ -110,6 +110,90 @@ describe("Switch", () => {
     }
   });
 
+  it("should render matching case for boolean value", () => {
+    const warnStub = sinon.stub(console, "warn");
+    const wrapper = mount(
+      <Switch value={true}>
+        <Case for={true}>case true</Case>
+        <Case for={false}>case false</Case>
+        <Default>default case</Default>
+      </Switch>
+    );
+
+    assert.lengthOf(wrapper.children(), 1);
+    assert.equal(wrapper.childAt(0).text(), "case true");
+    assert.isFalse(warnStub.called);
+
+    wrapper.setProps({ value: false });
+    {
+      assert.lengthOf(wrapper.children(), 1);
+      assert.equal(wrapper.childAt(0).text(), "case false");
+      assert.isFalse(warnStub.called);
+    }
+  });
+
+  it("should render default if no boolean value match", () => {
+    const warnStub = sinon.stub(console, "warn");
+    const wrapper = mount(
+      <Switch value={true}>
+        <Case for={false}>case false</Case>
+        <Default>default case</Default>
+      </Switch>
+    );
+
+    assert.lengthOf(wrapper.children(), 1);
+    assert.equal(wrapper.childAt(0).text(), "default case");
+    assert.isFalse(warnStub.called);
+  });
+
+  it("should render matching case for string value", () => {
+    const warnStub = sinon.stub(console, "warn");
+    const wrapper = mount(
+      <Switch value={"foo"}>
+        <Case for={"foo"}>case foo</Case>
+        <Case for={"bar"}>case bar</Case>
+        <Default>default case</Default>
+      </Switch>
+    );
+
+    assert.lengthOf(wrapper.children(), 1);
+    assert.equal(wrapper.childAt(0).text(), "case foo");
+    assert.isFalse(warnStub.called);
+
+    wrapper.setProps({ value: "bar" });
+    {
+      assert.lengthOf(wrapper.children(), 1);
+      assert.equal(wrapper.childAt(0).text(), "case bar");
+      assert.isFalse(warnStub.called);
+    }
+
+    wrapper.setProps({ value: false });
+    {
+      assert.lengthOf(wrapper.children(), 1);
+      assert.equal(wrapper.childAt(0).text(), "default case");
+      assert.isFalse(warnStub.called);
+    }
+  });
+
+  it("should render default if undefined or null value", () => {
+    const warnStub = sinon.stub(console, "warn");
+    const wrapper = mount(
+      <Switch value={true}>
+        <Default>default case</Default>
+      </Switch>
+    );
+
+    wrapper.setProps({ value: undefined });
+    assert.lengthOf(wrapper.children(), 1);
+    assert.equal(wrapper.childAt(0).text(), "default case");
+    assert.isFalse(warnStub.called);
+
+    wrapper.setProps({ value: null });
+    assert.lengthOf(wrapper.children(), 1);
+    assert.equal(wrapper.childAt(0).text(), "default case");
+    assert.isFalse(warnStub.called);
+  });
+
   it("should not affect rendering content in Case or Default components that are not direct children", () => {
     const warnStub = sinon.stub(console, "warn");
     const wrapper = mount(
