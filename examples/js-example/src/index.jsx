@@ -12,28 +12,35 @@ const Sample = () => (
     <Floco.If condition={true}>
       <>Condition is true</>
     </Floco.If>
+    <hr />
     <Floco.If condition={() => true}>
       <>Condition evaluates true</>
     </Floco.If>
+    <hr />
     <Floco.If condition={false}>
       <>Condition is true</>
       <Floco.Else>Condition is false</Floco.Else>
     </Floco.If>
+    <hr />
     <Floco.If condition={() => false}>
       <>Condition evaluates true</>
       <Floco.Else>Condition evaluates false</Floco.Else>
     </Floco.If>
+    <hr />
     {/* From export */}
     <If condition={true}>
       <>Condition is true</>
     </If>
+    <hr />
     <If condition={() => true}>
       <>Condition evaluates true</>
     </If>
+    <hr />
     <If condition={false}>
       <>Condition is true</>
       <Else>Condition is false</Else>
     </If>
+    <hr />
     <If condition={() => false}>
       <>Condition evaluates true</>
       <Else>Condition evaluates false</Else>
@@ -46,6 +53,7 @@ const Sample = () => (
       <Floco.Case for={2}>Case 2</Floco.Case>
       <Floco.Default>Case default</Floco.Default>
     </Floco.Switch>
+    <hr />
     {/* From export */}
     <Switch value={1}>
       <Case for={1}>Case 1</Case>
@@ -56,6 +64,7 @@ const Sample = () => (
     <h4>Repeat</h4>
     {/* From default export */}
     <Floco.Repeat times={10}>{({ key }) => <div key={key}>Repeat 10 times</div>}</Floco.Repeat>
+    <hr />
     {/* From export */}
     <Repeat times={10}>{({ key }) => <div key={key}>Repeat 10 times</div>}</Repeat>
   </>
