@@ -1,15 +1,18 @@
 FROM node:8
 
 # Install global packages
-RUN npm install -g http-server
-RUN npm install -g typescript
+RUN npm install -g http-server \
+    && npm install -g typescript@3.5.2
 
 COPY . /react-floco
 
 # Build react-floco
 WORKDIR /react-floco
 RUN npm install
-RUN npm run build
+# RUN npm run build
+RUN cat ./tsconfig.docker.json
+RUN tsc --project tsconfig.docker.json
+RUN ls ./dist
 
 COPY examples /examples
 
