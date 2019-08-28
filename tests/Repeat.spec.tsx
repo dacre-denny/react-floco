@@ -38,6 +38,15 @@ describe("Repeat", () => {
     assert.isTrue(warnStub.called);
   });
 
+  it("should render no children for null or undefined times prop", () => {
+    const warnStub = sinon.stub(console, "warn");
+    const wrapper = mount(<Repeat times={1}>{(props): React.ReactElement => <p {...props}>foo</p>}</Repeat>);
+
+    wrapper.setProps({ value: undefined });
+    assert.isTrue(wrapper.isEmptyRender());
+    assert.isTrue(warnStub.called);
+  });
+
   it("should pass props through to rendered children", () => {
     const warnStub = sinon.stub(console, "warn");
     const wrapper = mount(
