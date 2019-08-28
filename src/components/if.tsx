@@ -26,6 +26,11 @@ const isTypeNotElse = (element: React.ReactNode): boolean => !!element && (eleme
 export const If: React.SFC<PropsWithChildren<IfProps>> = props => {
   const { children, condition } = props;
 
+  if (condition === null || condition === undefined) {
+    console.warn(`If: condition prop must be boolean or function`);
+    return null;
+  }
+
   if (Array.isArray(children)) {
     if (conditionMet(condition)) {
       return <>{children.filter(isTypeNotElse)}</>;

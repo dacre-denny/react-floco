@@ -42,7 +42,11 @@ describe("Repeat", () => {
     const warnStub = sinon.stub(console, "warn");
     const wrapper = mount(<Repeat times={1}>{(props): React.ReactElement => <p {...props}>foo</p>}</Repeat>);
 
-    wrapper.setProps({ value: undefined });
+    wrapper.setProps({ times: null });
+    assert.isTrue(wrapper.isEmptyRender());
+    assert.isTrue(warnStub.called);
+
+    wrapper.setProps({ times: undefined });
     assert.isTrue(wrapper.isEmptyRender());
     assert.isTrue(warnStub.called);
   });
