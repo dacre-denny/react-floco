@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc --build --clean && tsc",
     "postinstall": "npm run build",
-    "prepublishOnly": "npm run lint && npm run test && npm run build",
+    "prepublishOnly": "npm run lint && npm run test",
     "lint": "eslint . --ext .ts,.tsx",
     "dev": "tsc --watch",
     "tdd": "mocha -r ts-node/register -r tests/helpers --watch-extensions ts,tsx -b -w tests/*.spec.*",
@@ -16,7 +16,7 @@
   "husky": {
     "hooks": {
       "pre-commit": "npm run lint",
-      "pre-push": "npm run lint && npm run test && npm run build"
+      "pre-push": "npm run lint && npm run test"
     }
   },
   "eslintIgnore": [
