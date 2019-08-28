@@ -6,7 +6,6 @@
   "typings": "dist/index.d.ts",
   "scripts": {
     "build": "tsc --build --clean && tsc",
-    "postinstall": "npm run build",
     "prepublishOnly": "npm run lint && npm run test",
     "lint": "eslint . --ext .ts,.tsx",
     "dev": "tsc --watch",
@@ -51,8 +50,7 @@
     "sinon": "^7.4.1",
     "ts-node": "^8.3.0",
     "tslint": "^5.18.0",
-    "typescript": "^3.5.3",
-    "eslint-watch": "^6.0.0"
+    "typescript": "^3.5.3"
   },
   "dependencies": {}
 }
