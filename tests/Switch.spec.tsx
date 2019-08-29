@@ -32,6 +32,38 @@ describe("Switch", () => {
     assert.isTrue(warnStub.called);
   });
 
+  it("should render nothing if undefined or null value", () => {
+    const warnStub = sinon.stub(console, "warn");
+    const wrapper = mount(<Switch value={true} />);
+
+    wrapper.setProps({ value: undefined });
+    assert.isEmpty(wrapper.children());
+    assert.isFalse(warnStub.called);
+
+    wrapper.setProps({ value: null });
+    assert.isEmpty(wrapper.children());
+    assert.isFalse(warnStub.called);
+  });
+
+  it("should render default if undefined or null value", () => {
+    const warnStub = sinon.stub(console, "warn");
+    const wrapper = mount(
+      <Switch value={true}>
+        <Default>default case</Default>
+      </Switch>
+    );
+
+    wrapper.setProps({ value: undefined });
+    assert.lengthOf(wrapper.children(), 1);
+    assert.equal(wrapper.childAt(0).text(), "default case");
+    assert.isFalse(warnStub.called);
+
+    wrapper.setProps({ value: null });
+    assert.lengthOf(wrapper.children(), 1);
+    assert.equal(wrapper.childAt(0).text(), "default case");
+    assert.isFalse(warnStub.called);
+  });
+
   it("should render nothing if no matching case and no default", () => {
     const warnStub = sinon.stub(console, "warn");
     const wrapper = mount(
@@ -173,25 +205,6 @@ describe("Switch", () => {
       assert.equal(wrapper.childAt(0).text(), "default case");
       assert.isFalse(warnStub.called);
     }
-  });
-
-  it("should render default if undefined or null value", () => {
-    const warnStub = sinon.stub(console, "warn");
-    const wrapper = mount(
-      <Switch value={true}>
-        <Default>default case</Default>
-      </Switch>
-    );
-
-    wrapper.setProps({ value: undefined });
-    assert.lengthOf(wrapper.children(), 1);
-    assert.equal(wrapper.childAt(0).text(), "default case");
-    assert.isFalse(warnStub.called);
-
-    wrapper.setProps({ value: null });
-    assert.lengthOf(wrapper.children(), 1);
-    assert.equal(wrapper.childAt(0).text(), "default case");
-    assert.isFalse(warnStub.called);
   });
 
   it("should not affect rendering content in Case or Default components that are not direct children", () => {

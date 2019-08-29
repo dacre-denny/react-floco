@@ -10,27 +10,6 @@ describe("If", () => {
     sinon.restore();
   });
 
-  it("should render nothing if null or undefined condition specified", () => {
-    const warnStub = sinon.stub(console, "warn");
-    const wrapper = mount(
-      <If condition={false}>
-        <p>foo</p>
-      </If>
-    );
-
-    wrapper.setProps({ condition: null });
-    {
-      assert.isTrue(warnStub.called);
-      assert.isTrue(wrapper.isEmptyRender());
-    }
-
-    wrapper.setProps({ condition: undefined });
-    {
-      assert.isTrue(warnStub.called);
-      assert.isTrue(wrapper.isEmptyRender());
-    }
-  });
-
   it("should render nothing if no content specified", () => {
     const warnStub = sinon.stub(console, "warn");
     const wrapper = mount(<If condition={false} />);
@@ -53,6 +32,27 @@ describe("If", () => {
     wrapper.setProps({ condition: () => true });
     {
       assert.isFalse(warnStub.called);
+      assert.isTrue(wrapper.isEmptyRender());
+    }
+  });
+
+  it("should render nothing if null or undefined condition specified", () => {
+    const warnStub = sinon.stub(console, "warn");
+    const wrapper = mount(
+      <If condition={false}>
+        <p>foo</p>
+      </If>
+    );
+
+    wrapper.setProps({ condition: null });
+    {
+      assert.isTrue(warnStub.called);
+      assert.isTrue(wrapper.isEmptyRender());
+    }
+
+    wrapper.setProps({ condition: undefined });
+    {
+      assert.isTrue(warnStub.called);
       assert.isTrue(wrapper.isEmptyRender());
     }
   });
