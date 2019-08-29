@@ -11,7 +11,7 @@
   <a href="https://www.npmjs.com/package/react-floco">
     <img src="https://img.shields.io/npm/dm/react-svg" alt="Downloads">
   </a>
-  <a href="https://app.codacy.com/app/dacre-denny/react-floco?utm_source=github.com&utm_medium=referral&utm_content=dacre-denny/react-floco&utm_campaign=Badge_Grade_Dashboard"><img src="https://api.codacy.com/project/badge/Grade/e5d066a126664778b259b48f814465a0" /></a>
+  <a href="https://www.codacy.com?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dacre-denny/react-floco&amp;utm_campaign=Badge_Grade"><img src="https://api.codacy.com/project/badge/Grade/ddc6850a2f2b4f94a621ab40ce22e557"/></a>
 </p>
 
 ---
