@@ -4,10 +4,12 @@
     "target": "es5",
     "lib": ["es2015", "dom"],
     "jsx": "react",
+    "removeComments": true,
+    "rootDir": "./src",
     "strict": false,
     "declaration": true,
     "module": "commonjs"
   },
-  "include": ["./src/index.ts", "./tests/**/*.tsx", "./tests/**/*.ts"],
+  "include": ["./src/**/*.ts", "./src/**/*.tsx"],
   "exclude": ["node_modules"]
 }

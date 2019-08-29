@@ -9,8 +9,7 @@ COPY . /react-floco
 # Build react-floco
 WORKDIR /react-floco
 RUN npm install
-RUN cat ./tsconfig.docker.json
-RUN tsc --project tsconfig.docker.json
+RUN tsc
 
 COPY examples /examples
 

@@ -6,7 +6,7 @@
   "typings": "dist/index.d.ts",
   "scripts": {
     "build": "tsc --build --clean && tsc",
-    "prepublishOnly": "npm run lint && npm run test",
+    "prepublishOnly": "npm run lint && npm run test && npm run build",
     "lint": "eslint . --ext .ts,.tsx",
     "dev": "tsc --watch",
     "tdd": "mocha -r ts-node/register -r tests/helpers --watch-extensions ts,tsx -b -w tests/*.spec.*",
@@ -20,7 +20,8 @@
   },
   "eslintIgnore": [
     "dist",
-    "examples"
+    "examples",
+    "tests"
   ],
   "keywords": [
     "react",

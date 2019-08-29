@@ -1,5 +1,5 @@
 <h1 align="center">react-floco</h1>
-<p align="center">Flow control rendering in React</p>
+<p align="center">Flow control for React</p>
 
 <p align="center">
   <a href="https://travis-ci.org/dacre-denny/react-floco">
@@ -43,4 +43,10 @@ TODO
 
 ```
 npm run test
+```
+
+## Run examples
+
+```
+docker-compose up
 ```
