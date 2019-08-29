@@ -4,6 +4,7 @@ import * as React from "react";
 import * as sinon from "sinon";
 import { If } from "../src/components/if";
 import { Else } from "../src/components/else";
+import { Loading } from "../src/components/loading";
 
 describe("If", () => {
   afterEach(function() {
@@ -64,24 +65,24 @@ describe("If", () => {
         <p>foo</p>
       </If>
     );
-
     assert.isFalse(warnStub.called);
     assert.isTrue(wrapper.isEmptyRender());
 
     wrapper.setProps({ condition: true });
+    wrapper.update();
     {
       assert.isFalse(warnStub.called);
       assert.lengthOf(wrapper.children(), 1);
       assert.strictEqual(wrapper.childAt(0).text(), "foo");
     }
-
     wrapper.setProps({ condition: false });
+    wrapper.update();
     {
       assert.isFalse(warnStub.called);
       assert.isTrue(wrapper.isEmptyRender());
     }
-
     wrapper.setProps({ condition: true });
+    wrapper.update();
     {
       assert.isFalse(warnStub.called);
       assert.lengthOf(wrapper.children(), 1);
@@ -101,6 +102,7 @@ describe("If", () => {
     assert.isTrue(wrapper.isEmptyRender());
 
     wrapper.setProps({ condition: () => true });
+    wrapper.update();
     {
       assert.isFalse(warnStub.called);
       assert.lengthOf(wrapper.children(), 1);
@@ -108,12 +110,14 @@ describe("If", () => {
     }
 
     wrapper.setProps({ condition: () => false });
+    wrapper.update();
     {
       assert.isFalse(warnStub.called);
       assert.isTrue(wrapper.isEmptyRender());
     }
 
     wrapper.setProps({ condition: () => true });
+    wrapper.update();
     {
       assert.isFalse(warnStub.called);
       assert.lengthOf(wrapper.children(), 1);
@@ -138,6 +142,7 @@ describe("If", () => {
     assert.equal(wrapper.childAt(1).text(), "was");
 
     wrapper.setProps({ condition: false });
+    wrapper.update();
     {
       assert.isFalse(warnStub.called);
       assert.lengthOf(wrapper.children(), 2);
@@ -163,6 +168,7 @@ describe("If", () => {
     assert.equal(wrapper.childAt(1).text(), "here");
 
     wrapper.setProps({ condition: true });
+    wrapper.update();
     {
       assert.isFalse(warnStub.called);
       assert.lengthOf(wrapper.children(), 2);
@@ -188,5 +194,38 @@ describe("If", () => {
 
     assert.isFalse(warnStub.called);
     assert.strictEqual(wrapper.text(), "foobarwashere");
+  });
+
+  it("should render children when async condition resolved to true", async () => {
+    const warnStub = sinon.stub(console, "warn");
+    let asyncResolve: (v?: boolean) => void;
+    const asyncCondition = new Promise<boolean>(resolve => {
+      asyncResolve = resolve;
+    });
+    console.log(1);
+    const wrapper = mount(
+      <If condition={() => asyncCondition}>
+        <Loading>loading</Loading>
+        <p>foo</p>
+      </If>
+    );
+    console.log(2);
+    // assert.isFalse(warnStub.called);
+    // assert.isTrue(wrapper.isEmptyRender());
+
+    assert.lengthOf(wrapper.children(), 1);
+    assert.strictEqual(wrapper.childAt(0).text(), "loading");
+
+    console.log(3);
+    asyncResolve!!(true);
+
+    await new Promise(r => setTimeout(r, 1000));
+
+    wrapper.update();
+    console.log(4);
+
+    assert.isFalse(warnStub.called);
+    assert.lengthOf(wrapper.children(), 1);
+    assert.strictEqual(wrapper.childAt(0).text(), "foo");
   });
 });

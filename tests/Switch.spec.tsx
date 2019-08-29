@@ -207,6 +207,50 @@ describe("Switch", () => {
     }
   });
 
+  it("should render matching case for mixed value types", () => {
+    const warnStub = sinon.stub(console, "warn");
+    const wrapper = mount(
+      <Switch value={1}>
+        <Case for={"foo"}>case foo</Case>
+        <Case for={2}>case 2</Case>
+        <Case for={false}>case false</Case>
+        <Default>default case</Default>
+      </Switch>
+    );
+
+    assert.lengthOf(wrapper.children(), 1);
+    assert.equal(wrapper.childAt(0).text(), "default case");
+    assert.isFalse(warnStub.called);
+
+    wrapper.setProps({ value: "foo" });
+    {
+      assert.lengthOf(wrapper.children(), 1);
+      assert.equal(wrapper.childAt(0).text(), "case foo");
+      assert.isFalse(warnStub.called);
+    }
+
+    wrapper.setProps({ value: 2 });
+    {
+      assert.lengthOf(wrapper.children(), 1);
+      assert.equal(wrapper.childAt(0).text(), "case 2");
+      assert.isFalse(warnStub.called);
+    }
+
+    wrapper.setProps({ value: false });
+    {
+      assert.lengthOf(wrapper.children(), 1);
+      assert.equal(wrapper.childAt(0).text(), "case false");
+      assert.isFalse(warnStub.called);
+    }
+
+    wrapper.setProps({ value: {} });
+    {
+      assert.lengthOf(wrapper.children(), 1);
+      assert.equal(wrapper.childAt(0).text(), "default case");
+      assert.isFalse(warnStub.called);
+    }
+  });
+
   it("should not affect rendering content in Case or Default components that are not direct children", () => {
     const warnStub = sinon.stub(console, "warn");
     const wrapper = mount(
