@@ -23,19 +23,26 @@ npm install --save react-floco
 ```
 
 ```
-import { If } from 'react-floco';
+import { Switch, Case, Default } from 'react-floco';
 
-const Status = (props) =>
-    (<div>
-        { props.firstName }
-        <If condition={ props.isAdmin }>(Admin)</If>
-    </div>);
+function Status (props) {
+
+    return (<Switch value={props.color}>
+        <Case for={"red"}>Danger!</Case>
+        <Case for={"orange"}>Warning!</Case>
+        <Case for={"green"}>All's well</Case>
+        <Default>Unknown</Default>
+    </Switch>);
+}
 ```
 
 ## Features
 
-- Declarative rendering primitives that mimic Switch/Case, If/Else and Repeat
-- Support for asynchronous evaluation
+- Declarative rendering primitives that mimic flow control for
+  - Switch statements
+  - Conditional if statements
+  - Count controlled loops
+- Support for asynchronous evaluation and rendering
 - Typescript support
 
 ## Examples
@@ -45,14 +52,16 @@ Use the Switch and Case components to render a badge name from a number of known
 ```
 import { Switch, Case, Default } from 'react-floco';
 
-const UserBadge = (props) =>
-    (<Switch value={props.user.badgeCode}>
+function UserBadge (props) {
+
+    return (<Switch value={props.user.badgeCode}>
         <Case for={"p"}>Platinum badge</Case>
         <Case for={"g"}>Gold badge</Case>
         <Case for={"s"}>Silver badge</Case>
         <Case for={"b"}>Bonze badge</Case>
         <Default>No badge earned</Default>
     </Switch>);
+}
 ```
 
 Use the If and Else components to perform conditional rendering declaratively:
@@ -60,31 +69,34 @@ Use the If and Else components to perform conditional rendering declaratively:
 ```
 import { If, Else } from 'react-floco';
 
-const RenderResponse = (props) =>
-    (<If condition={ props.response.ok }>
+function RenderResponse (props) {
+
+    return (<If condition={ props.response.ok }>
         Got successful response. Everything worked as expected.
-        <Else>Something went wrong. <b>Error code: {props.response.code}</b></Else>
+        <Else>Something went wrong. Error code: {props.response.code}</Else>
     </If>);
+}
 ```
 
-Use the Repeat component to render the same component multiple times:
+Use the Repeat component to render a component multiple times:
 
 ```
 import { Repeat, If, Else } from 'react-floco';
 
-const ItemsOrPlaceholders = (props) =>
-    (<If condition={props.loading}>
-        <Repeat times={ 5 }>{ ({ key }) => <Placeholder key={key} /> }</Repeat>
+function ItemsOrPlaceholders (props) {
+
+    return (<If condition={props.loading}>
+        <Repeat times={5}>{ ({ key }) => <Placeholder key={key} /> }</Repeat>
         <Else>{ props.items.map(item => <Item item={item} />) }</Else>
     </If>);
-
+}
 ```
 
 ## Usage
 
-### Conditional rendering with Switch/Case/Default
+### Conditional rendering with Switch, Case and Default
 
-The Switch component mimics the behavior of a regular [switch statement](https://en.wikipedia.org/wiki/Switch_statement) when rendering. The Switch will render any Case component that matches the current Switches `value` prop. If no match occurs and a Default component is present, then that will be rendered:
+The Switch component mimics the behavior of a regular [switch statement](https://en.wikipedia.org/wiki/Switch_statement) during rendering. The Switch will render any Case child that matches the current `value` prop of the Switch. If no match occurs and one or more Default component are present, then those will be rendered:
 
     <Switch value={age}>
         <Case for={1}>You're one</Case>
@@ -93,7 +105,7 @@ The Switch component mimics the behavior of a regular [switch statement](https:/
         <Default>You're old!</Default>
     </Switch>
 
-Multiple matches are also possible:
+Multiple Case matches are possible:
 
     <Switch value={role}>
         <Case for={'admin'}>As an administrator you have total control</Case>
@@ -117,7 +129,7 @@ The value prop can be an actual value or a function. Asynchronous functions are 
         <Case for={'user'}>You have limited privileges</Case>
     </Switch>
 
-### Conditional rendering with If/Else
+### Conditional rendering with If and Else
 
 The If component mimics the behavior of a [conditional statement](<https://en.wikipedia.org/wiki/Control_flow#If-then-(else)_statements>) to provide declarative conditional rendering. The If component will render when the `condition` prop evaluates to `true`. If the condition evaluates to `false` and an Else component is present, then that will be rendered instead:
 
@@ -144,7 +156,7 @@ The `condition` prop can be a boolean value or a function that returns a boolean
 
 ### Rendering multiple components with Repeat
 
-The Repeat component mimics the behavior of a [count controlled loop](https://en.wikipedia.org/wiki/Control_flow#Count-controlled_loops), providing a declarative means of rendering a component multiple times. The Repeat component renders via a callback function through which a `key` for the current iteration is provided:
+The Repeat component mimics the behavior of a [count controlled loop](https://en.wikipedia.org/wiki/Control_flow#Count-controlled_loops), providing a declarative means of rendering a component multiple times. The Repeat component renders children via a callback function through which a `key` for the current iteration is provided:
 
     <Repeat times={5}>
         ({ key }) => <p key={key}>I render five times</p>
