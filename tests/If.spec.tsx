@@ -2,6 +2,7 @@ import { assert } from "chai";
 import { mount } from "enzyme";
 import * as React from "react";
 import * as sinon from "sinon";
+import { deferred, tick } from "./async";
 import { If } from "../src/components/if";
 import { Else } from "../src/components/else";
 import { Loading } from "../src/components/loading";
@@ -198,34 +199,116 @@ describe("If", () => {
 
   it("should render children when async condition resolved to true", async () => {
     const warnStub = sinon.stub(console, "warn");
-    let asyncResolve: (v?: boolean) => void;
-    const asyncCondition = new Promise<boolean>(resolve => {
-      asyncResolve = resolve;
-    });
-    console.log(1);
+    const asyncDeferred = deferred<boolean>();
+
     const wrapper = mount(
-      <If condition={() => asyncCondition}>
+      <If condition={() => asyncDeferred.promise}>
         <Loading>loading</Loading>
         <p>foo</p>
       </If>
     );
-    console.log(2);
-    // assert.isFalse(warnStub.called);
-    // assert.isTrue(wrapper.isEmptyRender());
 
     assert.lengthOf(wrapper.children(), 1);
     assert.strictEqual(wrapper.childAt(0).text(), "loading");
 
-    console.log(3);
-    asyncResolve!!(true);
-
-    await new Promise(r => setTimeout(r, 1000));
+    await asyncDeferred.resolve(true);
 
     wrapper.update();
-    console.log(4);
 
     assert.isFalse(warnStub.called);
     assert.lengthOf(wrapper.children(), 1);
     assert.strictEqual(wrapper.childAt(0).text(), "foo");
+  });
+
+  it("should render children when async condition resolved to false", async () => {
+    const warnStub = sinon.stub(console, "warn");
+    const asyncDeferred = deferred<boolean>();
+
+    const wrapper = mount(
+      <If condition={() => asyncDeferred.promise}>
+        <Loading>loading</Loading>
+        <Else>bar</Else>
+        <p>foo</p>
+      </If>
+    );
+
+    assert.lengthOf(wrapper.children(), 1);
+    assert.strictEqual(wrapper.childAt(0).text(), "loading");
+
+    await asyncDeferred.resolve(false);
+    wrapper.update();
+
+    assert.isFalse(warnStub.called);
+    assert.lengthOf(wrapper.children(), 1);
+    assert.strictEqual(wrapper.childAt(0).text(), "bar");
+  });
+
+  it("should render different result when async condition changed and resolved to true", async () => {
+    const warnStub = sinon.stub(console, "warn");
+    const asyncDeferredTrue = deferred<boolean>();
+    const asyncDeferredFalse = deferred<boolean>();
+
+    const wrapper = mount(
+      <If condition={() => asyncDeferredTrue.promise}>
+        <Loading>loading</Loading>
+        <Else>bar</Else>
+        <p>foo</p>
+      </If>
+    );
+
+    assert.lengthOf(wrapper.children(), 1);
+    assert.strictEqual(wrapper.childAt(0).text(), "loading");
+
+    await asyncDeferredTrue.resolve(true);
+    wrapper.update();
+
+    assert.isFalse(warnStub.called);
+    assert.lengthOf(wrapper.children(), 1);
+    assert.strictEqual(wrapper.childAt(0).text(), "foo");
+
+    wrapper.setProps({ condition: () => asyncDeferredFalse.promise });
+    wrapper.update();
+
+    await tick();
+
+    assert.lengthOf(wrapper.children(), 1);
+    assert.strictEqual(wrapper.childAt(0).text(), "loading");
+
+    await asyncDeferredFalse.resolve(false);
+    wrapper.update();
+
+    assert.isFalse(warnStub.called);
+    assert.lengthOf(wrapper.children(), 1);
+    assert.strictEqual(wrapper.childAt(0).text(), "bar");
+  });
+
+  it("should render different result when async condition changed to value true", async () => {
+    const warnStub = sinon.stub(console, "warn");
+    const asyncDeferred = deferred<boolean>();
+
+    const wrapper = mount(
+      <If condition={() => asyncDeferred.promise}>
+        <Loading>loading</Loading>
+        <Else>bar</Else>
+        <p>foo</p>
+      </If>
+    );
+
+    assert.lengthOf(wrapper.children(), 1);
+    assert.strictEqual(wrapper.childAt(0).text(), "loading");
+
+    await asyncDeferred.resolve(true);
+    wrapper.update();
+
+    assert.isFalse(warnStub.called);
+    assert.lengthOf(wrapper.children(), 1);
+    assert.strictEqual(wrapper.childAt(0).text(), "foo");
+
+    wrapper.setProps({ condition: false });
+    wrapper.update();
+
+    assert.isFalse(warnStub.called);
+    assert.lengthOf(wrapper.children(), 1);
+    assert.strictEqual(wrapper.childAt(0).text(), "bar");
   });
 });

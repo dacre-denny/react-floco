@@ -36,18 +36,12 @@ export const If: React.SFC<PropsWithChildren<IfProps>> = props => {
 
   React.useEffect(() => {
     if (isFunction(props.condition)) {
-      const r = (props.condition as BooleanFunction)();
-      if (r instanceof Promise) {
-        (r as Promise<boolean>).then(
-          c => {
-            setCondition(c);
-          },
-          () => {
-            setCondition(false);
-          }
-        );
-      } else if (typeof r === "boolean") {
-        setCondition(r);
+      const value = (props.condition as BooleanFunction)();
+      if (value instanceof Promise) {
+        setCondition(undefined);
+        (value as Promise<boolean>).then(c => setCondition(c), () => setCondition(false));
+      } else if (typeof value === "boolean") {
+        setCondition(value);
       }
     } else if (typeof props.condition === "boolean") {
       setCondition(props.condition);
@@ -56,12 +50,10 @@ export const If: React.SFC<PropsWithChildren<IfProps>> = props => {
 
   if (Array.isArray(children)) {
     if (cond === true) {
-      console.log("zzzzzzzzzzzz", children.filter(isTypeNotElseNotLoading));
       return <>{children.filter(isTypeNotElseNotLoading)}</>;
     } else if (cond === false) {
       return <>{children.filter(isTypeElse)}</>;
     } else {
-      console.log("xxx1xxxxxxxxx", children.filter(isTypeLoading));
       return <>{children.filter(isTypeLoading)}</>;
     }
   }
