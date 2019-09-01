@@ -1,9 +1,22 @@
 import * as React from "react";
 import { Default, isTypeDefault } from "./default";
 import { Case, isTypeCaseMatch } from "./case";
-import { SwitchValue } from "../helpers";
+import { SwitchValue, isFunction } from "../helpers";
 
-type SwitchProps = { value: SwitchValue };
+type ValueOrPromise<T> = () => T | Promise<T>;
+type SwitchProps = { value: SwitchValue | ValueOrPromise<SwitchValue> };
+
+const isType = (node: React.ReactNode, ...types: any): boolean => {
+  const element = node as React.ReactElement;
+
+  for (const type of types) {
+    if (type === element.type) {
+      return true;
+    }
+  }
+
+  return false;
+};
 
 const isTypeSupported = (element: React.ReactNode): boolean => !!element && ((element as React.ReactElement).type === Default || (element as React.ReactElement).type === Case);
 
@@ -22,26 +35,63 @@ const isTypeSupported = (element: React.ReactNode): boolean => !!element && ((el
 export const Switch = (props: React.PropsWithChildren<SwitchProps>): React.ReactElement | null => {
   const { children, value } = props;
 
+  const [switchValue, setValue] = React.useState<SwitchValue>();
+  const present = React.useRef<boolean>(true);
+
+  React.useEffect(() => {
+    if (isFunction(props.value)) {
+      const value = (props.value as ValueOrPromise<SwitchValue>)();
+      if (value instanceof Promise) {
+        (value as Promise<SwitchValue>).then(
+          c => {
+            if (present.current) {
+              setValue(c);
+            }
+          },
+          () => {
+            if (present.current) {
+              setValue(false);
+            }
+          }
+        );
+      } else {
+        setValue(value);
+      }
+    } else {
+      setValue(value);
+    }
+
+    return () => {
+      present.current = false;
+    };
+  }, [value]);
+
   if (Array.isArray(children)) {
-    if (!children.some(isTypeSupported)) {
+    if (!children.every(isTypeSupported)) {
       console.warn(`Switch: only Case or Default children are supported`);
     }
 
-    const matchedCases = children.filter(isTypeCaseMatch(value));
-    if (matchedCases.length > 0) {
-      return <>{matchedCases}</>;
+    const cases = children.filter(isTypeCaseMatch(switchValue!));
+    if (cases.length) {
+      return <>{cases}</>;
     }
 
     const defaults = children.filter(isTypeDefault);
     if (defaults.length > 0) {
       return <>{defaults}</>;
     }
-  } else if (children) {
+  }
+
+  if (children) {
     if (!isTypeSupported(children)) {
       console.warn(`Switch: only Case or Default children are supported`);
     }
 
-    if (isTypeCaseMatch(value)(children) || isTypeDefault(children)) {
+    if (isTypeCaseMatch(switchValue!)(children)) {
+      return <>{children}</>;
+    }
+
+    if (isTypeDefault(children)) {
       return <>{children}</>;
     }
   }

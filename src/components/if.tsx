@@ -36,17 +36,17 @@ export const If: React.SFC<PropsWithChildren<IfProps>> = props => {
 
   React.useEffect(() => {
     if (isFunction(props.condition)) {
-      const value = (props.condition as BooleanFunction)();
+      const value = (condition as BooleanFunction)();
       if (value instanceof Promise) {
         setCondition(undefined);
         (value as Promise<boolean>).then(c => setCondition(c), () => setCondition(false));
       } else if (typeof value === "boolean") {
         setCondition(value);
       }
-    } else if (typeof props.condition === "boolean") {
-      setCondition(props.condition);
+    } else if (typeof condition === "boolean") {
+      setCondition(condition);
     }
-  }, [props.condition]);
+  }, [condition]);
 
   if (Array.isArray(children)) {
     if (cond === true) {

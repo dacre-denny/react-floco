@@ -15,7 +15,7 @@ describe("Switch", () => {
     const warnStub = sinon.stub(console, "warn");
     const wrapper = mount(<Switch value={1} />);
 
-    assert.isEmpty(wrapper.children());
+    assert.isTrue(wrapper.isEmptyRender());
     assert.isFalse(warnStub.called);
   });
 
@@ -74,7 +74,7 @@ describe("Switch", () => {
       </Switch>
     );
 
-    assert.isEmpty(wrapper.children());
+    assert.isTrue(wrapper.isEmptyRender());
     assert.isFalse(warnStub.called);
   });
 
