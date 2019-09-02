@@ -20,6 +20,8 @@ const isType = (node: React.ReactNode, ...types: any): boolean => {
 
 const isTypeSupported = (element: React.ReactNode): boolean => !!element && ((element as React.ReactElement).type === Default || (element as React.ReactElement).type === Case);
 
+const isInvalid = (value: SwitchValue) => value === null || value === undefined;
+
 /**
  * Switch component provides conditional rendering of inner content for Case blocks that
  * match on the specified value prop.
@@ -36,20 +38,22 @@ export const Switch = (props: React.PropsWithChildren<SwitchProps>): React.React
   const { children, value } = props;
 
   const [switchValue, setValue] = React.useState<SwitchValue>();
-  const present = React.useRef<boolean>(true);
+  const present = React.useRef<any>();
 
   React.useEffect(() => {
+    present.current = props.value;
+
     if (isFunction(props.value)) {
       const value = (props.value as ValueOrPromise<SwitchValue>)();
       if (value instanceof Promise) {
         (value as Promise<SwitchValue>).then(
-          c => {
-            if (present.current) {
+          (c: SwitchValue) => {
+            if (present.current === value) {
               setValue(c);
             }
           },
           () => {
-            if (present.current) {
+            if (present.current === value) {
               setValue(false);
             }
           }
@@ -62,7 +66,7 @@ export const Switch = (props: React.PropsWithChildren<SwitchProps>): React.React
     }
 
     return () => {
-      present.current = false;
+      present.current = null;
     };
   }, [value]);
 
@@ -76,13 +80,12 @@ export const Switch = (props: React.PropsWithChildren<SwitchProps>): React.React
       return <>{cases}</>;
     }
 
-    const defaults = children.filter(isTypeDefault);
-    if (defaults.length > 0) {
+    const defaults = children.filter(child => isTypeDefault(child) || isInvalid(value));
+
+    if (defaults.length) {
       return <>{defaults}</>;
     }
-  }
-
-  if (children) {
+  } else if (children) {
     if (!isTypeSupported(children)) {
       console.warn(`Switch: only Case or Default children are supported`);
     }
@@ -91,7 +94,7 @@ export const Switch = (props: React.PropsWithChildren<SwitchProps>): React.React
       return <>{children}</>;
     }
 
-    if (isTypeDefault(children)) {
+    if (isTypeDefault(children) || isInvalid(value)) {
       return <>{children}</>;
     }
   }

@@ -5,6 +5,7 @@ import * as sinon from "sinon";
 import { Switch } from "../src/components/switch";
 import { Default } from "../src/components/default";
 import { Case } from "../src/components/case";
+import { tick } from "./async";
 
 describe("Switch", () => {
   afterEach(function() {
@@ -28,7 +29,7 @@ describe("Switch", () => {
       </Switch>
     );
 
-    assert.isEmpty(wrapper.children());
+    assert.isTrue(wrapper.isEmptyRender());
     assert.isTrue(warnStub.called);
   });
 
@@ -41,11 +42,11 @@ describe("Switch", () => {
     assert.isFalse(warnStub.called);
 
     wrapper.setProps({ value: null });
-    assert.isEmpty(wrapper.children());
+    assert.isTrue(wrapper.isEmptyRender());
     assert.isFalse(warnStub.called);
   });
 
-  it("should render default if undefined or null value", () => {
+  it("should render default if undefined or null value", async () => {
     const warnStub = sinon.stub(console, "warn");
     const wrapper = mount(
       <Switch value={true}>
@@ -54,14 +55,18 @@ describe("Switch", () => {
     );
 
     wrapper.setProps({ value: undefined });
-    assert.lengthOf(wrapper.children(), 1);
-    assert.equal(wrapper.childAt(0).text(), "default case");
-    assert.isFalse(warnStub.called);
+    {
+      assert.equal(wrapper.text(), "default case");
+      assert.equal(wrapper.childAt(0).text(), "default case");
+      assert.isFalse(warnStub.called);
+    }
 
     wrapper.setProps({ value: null });
-    assert.lengthOf(wrapper.children(), 1);
-    assert.equal(wrapper.childAt(0).text(), "default case");
-    assert.isFalse(warnStub.called);
+    {
+      assert.lengthOf(wrapper.children(), 1);
+      assert.equal(wrapper.childAt(0).text(), "default case");
+      assert.isFalse(warnStub.called);
+    }
   });
 
   it("should render nothing if no matching case and no default", () => {
@@ -93,6 +98,7 @@ describe("Switch", () => {
     assert.isFalse(warnStub.called);
 
     wrapper.setProps({ value: 2 });
+    wrapper.update();
     {
       assert.lengthOf(wrapper.children(), 1);
       assert.equal(wrapper.childAt(0).prop("for"), 2);
@@ -101,6 +107,7 @@ describe("Switch", () => {
     }
 
     wrapper.setProps({ value: 1 });
+    wrapper.update();
     {
       assert.lengthOf(wrapper.children(), 1);
       assert.equal(wrapper.childAt(0).prop("for"), 1);
@@ -127,6 +134,7 @@ describe("Switch", () => {
     assert.isFalse(warnStub.called);
 
     wrapper.setProps({ value: 2 });
+    wrapper.update();
     {
       assert.lengthOf(wrapper.children(), 2);
       assert.equal(wrapper.childAt(0).text(), "first case 2");
@@ -135,6 +143,7 @@ describe("Switch", () => {
     }
 
     wrapper.setProps({ value: 1 });
+    wrapper.update();
     {
       assert.lengthOf(wrapper.children(), 1);
       assert.equal(wrapper.childAt(0).text(), "first case 1");
@@ -157,6 +166,7 @@ describe("Switch", () => {
     assert.isFalse(warnStub.called);
 
     wrapper.setProps({ value: false });
+    wrapper.update();
     {
       assert.lengthOf(wrapper.children(), 1);
       assert.equal(wrapper.childAt(0).text(), "case false");
@@ -193,6 +203,7 @@ describe("Switch", () => {
     assert.isFalse(warnStub.called);
 
     wrapper.setProps({ value: "bar" });
+    wrapper.update();
     {
       assert.lengthOf(wrapper.children(), 1);
       assert.equal(wrapper.childAt(0).text(), "case bar");
@@ -200,6 +211,7 @@ describe("Switch", () => {
     }
 
     wrapper.setProps({ value: false });
+    wrapper.update();
     {
       assert.lengthOf(wrapper.children(), 1);
       assert.equal(wrapper.childAt(0).text(), "default case");
@@ -223,6 +235,7 @@ describe("Switch", () => {
     assert.isFalse(warnStub.called);
 
     wrapper.setProps({ value: "foo" });
+    wrapper.update();
     {
       assert.lengthOf(wrapper.children(), 1);
       assert.equal(wrapper.childAt(0).text(), "case foo");
@@ -230,6 +243,7 @@ describe("Switch", () => {
     }
 
     wrapper.setProps({ value: 2 });
+    wrapper.update();
     {
       assert.lengthOf(wrapper.children(), 1);
       assert.equal(wrapper.childAt(0).text(), "case 2");
@@ -237,6 +251,7 @@ describe("Switch", () => {
     }
 
     wrapper.setProps({ value: false });
+    wrapper.update();
     {
       assert.lengthOf(wrapper.children(), 1);
       assert.equal(wrapper.childAt(0).text(), "case false");
@@ -244,6 +259,7 @@ describe("Switch", () => {
     }
 
     wrapper.setProps({ value: {} });
+    wrapper.update();
     {
       assert.lengthOf(wrapper.children(), 1);
       assert.equal(wrapper.childAt(0).text(), "default case");
@@ -272,12 +288,14 @@ describe("Switch", () => {
     assert.isFalse(warnStub.called);
 
     wrapper.setProps({ value: 2 });
+    wrapper.update();
     {
       assert.equal(wrapper.text(), "case 2");
       assert.isFalse(warnStub.called);
     }
 
     wrapper.setProps({ value: 3 });
+    wrapper.update();
     {
       assert.equal(wrapper.text(), "default");
       assert.isFalse(warnStub.called);
