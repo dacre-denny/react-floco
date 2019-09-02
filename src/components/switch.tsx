@@ -2,12 +2,17 @@ import * as React from "react";
 import { Default, isTypeDefault } from "./default";
 import { Case, isTypeCaseMatch } from "./case";
 import { SwitchValue, isFunction } from "../helpers";
+import { Loading } from "./loading";
 
 type ValueOrPromise<T> = () => T | Promise<T>;
 type SwitchProps = { value: SwitchValue | ValueOrPromise<SwitchValue> };
 
-const isType = (node: React.ReactNode, ...types: any): boolean => {
+const isType = (...types: any) => (node: React.ReactNode): boolean => {
   const element = node as React.ReactElement;
+
+  if (!element) {
+    return false;
+  }
 
   for (const type of types) {
     if (type === element.type) {
@@ -18,7 +23,7 @@ const isType = (node: React.ReactNode, ...types: any): boolean => {
   return false;
 };
 
-const isTypeSupported = (element: React.ReactNode): boolean => !!element && ((element as React.ReactElement).type === Default || (element as React.ReactElement).type === Case);
+const isTypeSupported = isType(Default, Case, Loading);
 
 const isInvalid = (value: SwitchValue) => value === null || value === undefined;
 
@@ -41,12 +46,12 @@ export const Switch = (props: React.PropsWithChildren<SwitchProps>): React.React
   const present = React.useRef<any>();
 
   React.useEffect(() => {
-    present.current = props.value;
-
+    present.current = value;
     if (isFunction(props.value)) {
-      const value = (props.value as ValueOrPromise<SwitchValue>)();
-      if (value instanceof Promise) {
-        (value as Promise<SwitchValue>).then(
+      const result = (props.value as ValueOrPromise<SwitchValue>)();
+      if (result instanceof Promise) {
+        setValue(undefined);
+        (result as Promise<SwitchValue>).then(
           (c: SwitchValue) => {
             if (present.current === value) {
               setValue(c);
@@ -75,13 +80,16 @@ export const Switch = (props: React.PropsWithChildren<SwitchProps>): React.React
       console.warn(`Switch: only Case or Default children are supported`);
     }
 
+    if (switchValue === undefined) {
+      return <>{children.filter(isType(Loading))}</>;
+    }
+
     const cases = children.filter(isTypeCaseMatch(switchValue!));
     if (cases.length) {
       return <>{cases}</>;
     }
 
     const defaults = children.filter(child => isTypeDefault(child) || isInvalid(value));
-
     if (defaults.length) {
       return <>{defaults}</>;
     }

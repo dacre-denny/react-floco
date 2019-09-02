@@ -8,6 +8,7 @@ export const deferred = <T>() => {
 
   return {
     promise,
+    promiseFunction: () => promise,
     resolve: async (value: T) => {
       if (resolve) {
         resolve(value);
