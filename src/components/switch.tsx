@@ -43,6 +43,7 @@ export const Switch = (props: React.PropsWithChildren<SwitchProps>): React.React
   const { children, value } = props;
 
   const [switchValue, setValue] = React.useState<SwitchValue>();
+  const [loading, setLoading] = React.useState<boolean>();
   const present = React.useRef<any>();
 
   React.useEffect(() => {
@@ -80,7 +81,7 @@ export const Switch = (props: React.PropsWithChildren<SwitchProps>): React.React
       console.warn(`Switch: only Case or Default children are supported`);
     }
 
-    if (switchValue === undefined) {
+    if (loading) {
       return <>{children.filter(isType(Loading))}</>;
     }
 
@@ -96,6 +97,10 @@ export const Switch = (props: React.PropsWithChildren<SwitchProps>): React.React
   } else if (children) {
     if (!isTypeSupported(children)) {
       console.warn(`Switch: only Case or Default children are supported`);
+    }
+
+    if (loading) {
+      return <>{isType(Loading)(children)}</>;
     }
 
     if (isTypeCaseMatch(switchValue!)(children)) {
