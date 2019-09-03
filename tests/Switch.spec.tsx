@@ -13,6 +13,7 @@ describe("Switch", () => {
     sinon.restore();
   });
 
+  return;
   describe("When nothing is rendered", () => {
     it("Should render nothing if no valid children", () => {
       const warnStub = sinon.stub(console, "warn");
@@ -53,7 +54,6 @@ describe("Switch", () => {
       );
 
       wrapper.setProps({ value: null });
-      console.log("4444444");
 
       assert.isTrue(wrapper.isEmptyRender());
       assert.isFalse(warnStub.called);

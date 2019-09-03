@@ -8,5 +8,3 @@ import * as React from "react";
 export const Default: React.SFC = props => {
   return <>{props.children}</>;
 };
-
-export const isTypeDefault = (element: React.ReactNode): boolean => !!element && (element as React.ReactElement).type === Default;
