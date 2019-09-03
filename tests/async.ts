@@ -13,15 +13,17 @@ export const deferred = <T>() => {
       if (resolve) {
         resolve(value);
         resolve = undefined;
+        return tick();
       }
     },
     reject: async (err: Error) => {
       if (reject) {
         reject(err);
         reject = undefined;
+        return tick();
       }
     }
   };
 };
 
-export const tick = async () => await new Promise(r => setTimeout(r, 1));
+export const tick = async (delay = 1) => await new Promise(r => setTimeout(r, delay));

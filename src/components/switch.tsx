@@ -1,12 +1,12 @@
 import * as React from "react";
 import { Default } from "./default";
-import { Case, CaseProps } from "./case";
-import { SwitchValue, isFunction } from "../helpers";
+import { isFunction, SwitchValue } from "../helpers";
 import { Loading } from "./loading";
+import { Case, CaseProps } from "./case";
 
 type ValueOrPromise<T> = () => T | Promise<T>;
 type SwitchProps = { value: SwitchValue | ValueOrPromise<SwitchValue> };
-type SwitchData = { state: State; value?: SwitchValue };
+type SwitchData = { loading: boolean; value?: SwitchValue };
 
 const isType = (...types: any) => (node: React.ReactNode): boolean => {
   const element = node as React.ReactElement;
@@ -36,12 +36,6 @@ const isTypeCaseMatch = (value?: SwitchValue) => (node: React.ReactNode): boolea
 
 const isTypeSupported = isType(Default, Case, Loading);
 
-enum State {
-  Ready = 1,
-  Loading = 2,
-  Error = 3
-}
-
 /**
  * Switch component provides conditional rendering of inner content for Case blocks that
  * match on the specified value prop.
@@ -58,15 +52,16 @@ export const Switch = (props: React.PropsWithChildren<SwitchProps>): React.React
   const valueRef = React.useRef<SwitchValue>();
   const [data, setData] = React.useState<SwitchData>({
     value: undefined,
-    state: State.Ready
+    loading: false
   });
 
+  console.log("data", data);
   const evaluateValue = async (value: SwitchValue) => {
     if (isFunction(value)) {
       const result = (value as Function)();
       if (result instanceof Promise) {
         // Only set loading state for promises
-        setData(state => ({ ...state, state: State.Loading }));
+        setData(state => ({ ...state, loading: true }));
 
         await result;
       }
@@ -86,12 +81,12 @@ export const Switch = (props: React.PropsWithChildren<SwitchProps>): React.React
 
       if (valueRef.current === props.value) {
         // If value prop reference intact, update state from async completion
-        setData(state => ({ ...state, value: result, state: State.Ready }));
+        setData(state => ({ ...state, value: result, loading: false }));
       }
     } catch {
       if (valueRef.current === props.value) {
         // If value prop reference intact and error occurred, update error state
-        setData(state => ({ ...state, state: State.Error }));
+        setData(state => ({ ...state, value: undefined, loading: false }));
       }
     }
   };
@@ -101,7 +96,7 @@ export const Switch = (props: React.PropsWithChildren<SwitchProps>): React.React
 
     return () => {
       // When value changes, reset state to ready for next async/sync/value prop
-      setData(state => ({ ...state, state: State.Ready }));
+      setData(state => ({ ...state, loading: false }));
     };
   }, [props.value]);
 
@@ -111,7 +106,7 @@ export const Switch = (props: React.PropsWithChildren<SwitchProps>): React.React
     console.warn(`Switch: only Case or Default children are supported`);
   }
 
-  if (data.state === State.Loading) {
+  if (data.loading) {
     return <>{childrenArray.filter(isType(Loading))}</>;
   }
 
