@@ -8,7 +8,7 @@ import { Default } from "../src/components/default";
 import { Switch } from "../src/components/switch";
 import { deferred, tick } from "./async";
 
-describe("Switch", () => {
+describe("The Switch component", () => {
   afterEach(function() {
     sinon.restore();
   });
@@ -28,6 +28,23 @@ describe("Switch", () => {
         <Switch value={null}>
           <div>foo</div>
           <p>bar</p>
+        </Switch>
+      );
+
+      assert.isTrue(wrapper.isEmptyRender());
+      assert.isTrue(warnStub.calledWith(`Switch: only Case or Default children are supported`));
+    });
+
+    it("Should render nothing and report warning if supported descendants are present", () => {
+      const warnStub = sinon.stub(console, "warn");
+      const wrapper = mount(
+        <Switch value={null}>
+          <div>
+            <Case for={1}>Case 1</Case>
+          </div>
+          <p>
+            <Default>default case</Default>
+          </p>
         </Switch>
       );
 
@@ -277,154 +294,144 @@ describe("Switch", () => {
       assert.equal(wrapper.children().length, 1);
       assert.isFalse(warnStub.called);
     });
-  });
 
-  it("Should render Loading children while async value pending", async () => {
-    const deferredValue = deferred();
-    const warnStub = sinon.stub(console, "warn");
-    const wrapper = mount(
-      <Switch value={deferredValue.promiseFunction}>
-        <Loading>foo</Loading>
-        <Loading>bar</Loading>
-      </Switch>
-    );
-
-    assert.isTrue(wrapper.containsAllMatchingElements([<Loading>foo</Loading>, <Loading>bar</Loading>]));
-    assert.equal(wrapper.children().length, 2);
-    assert.isFalse(warnStub.called);
-  });
-
-  it("Should render Loading children while async value pending", async () => {
-    const warnStub = sinon.stub(console, "warn");
-    const deferredValue = deferred();
-    const wrapper = mount(
-      <Switch value={deferredValue.promiseFunction}>
-        <Loading>foo</Loading>
-        <Loading>bar</Loading>
-      </Switch>
-    );
-
-    assert.isTrue(wrapper.containsAllMatchingElements([<Loading>foo</Loading>, <Loading>bar</Loading>]));
-    assert.equal(wrapper.children().length, 2);
-    assert.isFalse(warnStub.called);
-
-    /**      const warnStub = sinon.stub(console, "warn");
-      const deferredValue = deferred();
-
+    it("Should render Case children that match mixed value types", async () => {
+      const warnStub = sinon.stub(console, "warn");
       const wrapper = mount(
-        <Switch value={deferredValue.promiseFunction}>
+        <Switch value={0}>
           <Case for={1}>case 1</Case>
-          <Case for={2}>case 2</Case>
-          <Case for={3}>case 3</Case>
+          <Case for={true}>case true</Case>
+          <Case for={"string"}>case string</Case>
+          <Case for={null}>case null</Case>
         </Switch>
       );
 
-      assert.isTrue(wrapper.isEmptyRender());
-      assert.isFalse(warnStub.called);
-
-      await deferredValue.resolve(1);
+      wrapper.setProps({ value: null });
       wrapper.update();
 
-      assert.isTrue(wrapper.containsMatchingElement(<Case for={1}>case 1</Case>));
-      assert.equal(wrapper.children().length, 1); */
-  });
+      assert.isTrue(wrapper.containsAllMatchingElements([<Case for={null}>case null</Case>]));
+      assert.equal(wrapper.children().length, 1);
 
-  return;
+      wrapper.setProps({ value: "string" });
+      wrapper.update();
 
-  describe("Edge cases for async value prop", () => {
-    it("Value changes before promise resolves do not interrupt rendering", async () => {
+      assert.isTrue(wrapper.containsAllMatchingElements([<Case for={"string"}>case string</Case>]));
+      assert.equal(wrapper.children().length, 1);
+
+      wrapper.setProps({ value: true });
+      wrapper.update();
+
+      assert.isTrue(wrapper.containsAllMatchingElements([<Case for={true}>case true</Case>]));
+      assert.equal(wrapper.children().length, 1);
+
+      wrapper.setProps({ value: 1 });
+      wrapper.update();
+
+      assert.isTrue(wrapper.containsAllMatchingElements([<Case for={1}>case 1</Case>]));
+      assert.equal(wrapper.children().length, 1);
+
+      assert.isFalse(warnStub.called);
+    });
+
+    it("Should render Case children that match updated value if prior async value not resolved", async () => {
       const warnStub = sinon.stub(console, "warn");
       const deferredValue = deferred();
 
       const wrapper = mount(
-        <Switch value={deferredValue.promiseFunction}>
+        <Switch value={null}>
           <Case for={1}>case 1</Case>
           <Case for={2}>case 2</Case>
           <Case for={3}>case 3</Case>
         </Switch>
       );
 
+      wrapper.setProps({ value: deferredValue.promiseFunction });
+      wrapper.update();
+
       assert.isTrue(wrapper.isEmptyRender());
       assert.isFalse(warnStub.called);
 
+      // Change value before promise resolved
       wrapper.setProps({ value: 3 });
       wrapper.update();
 
       assert.isTrue(wrapper.containsMatchingElement(<Case for={3}>case 3</Case>));
       assert.equal(wrapper.children().length, 1);
 
-      /* Resolve promise after value prop updated */
+      // Resolve promise after value prop updated
       await deferredValue.resolve(1);
       wrapper.update();
 
       assert.isTrue(wrapper.containsMatchingElement(<Case for={3}>case 3</Case>));
       assert.equal(wrapper.children().length, 1);
-    });
 
-    it("Should render Loading if present while promise in pending state", async () => {
-      const warnStub = sinon.stub(console, "warn");
-      const deferredValue = deferred();
-
-      const wrapper = mount(
-        <Switch value={deferredValue.promiseFunction}>
-          <Loading>loading</Loading>
-          <Case for={1}>case 1</Case>
-          <Case for={2}>case 2</Case>
-          <Case for={3}>case 2</Case>
-        </Switch>
-      );
-
-      wrapper.update();
-
-      assert.isTrue(wrapper.containsMatchingElement(<Loading>loading</Loading>));
-      assert.isFalse(warnStub.called);
-
-      await deferredValue.resolve(1);
+      wrapper.setProps({ value: deferredValue.promise });
+      await tick();
       wrapper.update();
 
       assert.isTrue(wrapper.containsMatchingElement(<Case for={1}>case 1</Case>));
       assert.equal(wrapper.children().length, 1);
     });
 
-    it("Should render Default if promise rejected", async () => {
+    it("Should render Case children that match updated value if prior async value not resolved", async () => {
       const warnStub = sinon.stub(console, "warn");
-      const deferredValue = deferred();
+      const deferredValueA = deferred();
+      const deferredValueB = deferred();
 
       const wrapper = mount(
-        <Switch value={deferredValue.promiseFunction}>
+        <Switch value={null}>
           <Case for={1}>case 1</Case>
           <Case for={2}>case 2</Case>
-          <Case for={3}>case 2</Case>
-          <Default>default</Default>
+          <Case for={3}>case 3</Case>
         </Switch>
       );
 
-      assert.isTrue(wrapper.isEmptyRender());
-      assert.isFalse(warnStub.called);
-
-      await deferredValue.reject(new Error());
+      wrapper.setProps({ value: deferredValueA.promiseFunction });
+      await tick();
       wrapper.update();
 
-      assert.isTrue(wrapper.containsMatchingElement(<Default>default</Default>));
-      assert.equal(wrapper.children().length, 1);
-    });
+      assert.isTrue(wrapper.isEmptyRender());
+      assert.isFalse(warnStub.called);
 
-    it("Should render matching Case after promise resolved", async () => {
-      const warnStub = sinon.stub(console, "warn");
-      const deferredValue = deferred();
-
-      const wrapper = mount(
-        <Switch value={deferredValue.promiseFunction}>
-          <Case for={1}>case 1</Case>
-          <Case for={2}>case 2</Case>
-          <Case for={3}>case 2</Case>
-        </Switch>
-      );
+      wrapper.setProps({ value: deferredValueB.promiseFunction });
+      await tick();
+      wrapper.update();
 
       assert.isTrue(wrapper.isEmptyRender());
       assert.isFalse(warnStub.called);
 
-      await deferredValue.resolve(1);
+      // Resolve promise after value prop updated
+      await deferredValueA.resolve(1);
+      wrapper.update();
+      console.log(wrapper.debug());
+      return;
+      assert.isTrue(wrapper.isEmptyRender());
+      assert.isFalse(warnStub.called);
+
+      // Resolve promise after value prop updated
+      await deferredValueB.resolve(2);
+      wrapper.update();
+
+      assert.isTrue(wrapper.containsMatchingElement(<Case for={2}>case 2</Case>));
+      assert.equal(wrapper.children().length, 1);
+
+      return;
+      // Change value before promise resolved
+      wrapper.setProps({ value: 3 });
+      wrapper.update();
+
+      assert.isTrue(wrapper.containsMatchingElement(<Case for={3}>case 3</Case>));
+      assert.equal(wrapper.children().length, 1);
+
+      // Resolve promise after value prop updated
+      await deferredValueA.resolve(1);
+      wrapper.update();
+
+      assert.isTrue(wrapper.containsMatchingElement(<Case for={3}>case 3</Case>));
+      assert.equal(wrapper.children().length, 1);
+
+      wrapper.setProps({ value: deferredValueA.promise });
+      await tick();
       wrapper.update();
 
       assert.isTrue(wrapper.containsMatchingElement(<Case for={1}>case 1</Case>));
@@ -432,190 +439,23 @@ describe("Switch", () => {
     });
   });
 
-  describe("Case matching behavior", () => {});
-  it("should render multiple matching cases or multiple defaults if no match", () => {
-    const warnStub = sinon.stub(console, "warn");
-    const wrapper = mount(
-      <Switch value={0}>
-        <Case for={1}>first case 1</Case>
-        <Default>first default case</Default>
-        <Case for={2}>first case 2</Case>
-        <Case for={2}>second case 2</Case>
-        <Default>second default case</Default>
-      </Switch>
-    );
+  describe("When Loading is rendered", () => {
+    it("Should render Loading children while async value pending", async () => {
+      const deferredValue = deferred();
+      const warnStub = sinon.stub(console, "warn");
+      const wrapper = mount(
+        <Switch value={null}>
+          <Loading>foo</Loading>
+          <Loading>bar</Loading>
+        </Switch>
+      );
 
-    assert.lengthOf(wrapper.children(), 2);
-    assert.equal(wrapper.childAt(0).text(), "first default case");
-    assert.equal(wrapper.childAt(1).text(), "second default case");
-    assert.isFalse(warnStub.called);
+      wrapper.setProps({ value: deferredValue.promiseFunction });
+      wrapper.update();
 
-    wrapper.setProps({ value: 2 });
-    wrapper.update();
-    {
-      assert.lengthOf(wrapper.children(), 2);
-      assert.equal(wrapper.childAt(0).text(), "first case 2");
-      assert.equal(wrapper.childAt(1).text(), "second case 2");
+      assert.isTrue(wrapper.containsAllMatchingElements([<Loading>foo</Loading>, <Loading>bar</Loading>]));
+      assert.equal(wrapper.children().length, 2);
       assert.isFalse(warnStub.called);
-    }
-
-    wrapper.setProps({ value: 1 });
-    wrapper.update();
-    {
-      assert.lengthOf(wrapper.children(), 1);
-      assert.equal(wrapper.childAt(0).text(), "first case 1");
-      assert.isFalse(warnStub.called);
-    }
-  });
-
-  it("should render matching case for boolean value", () => {
-    const warnStub = sinon.stub(console, "warn");
-    const wrapper = mount(
-      <Switch value={true}>
-        <Case for={true}>case true</Case>
-        <Case for={false}>case false</Case>
-        <Default>default case</Default>
-      </Switch>
-    );
-
-    assert.lengthOf(wrapper.children(), 1);
-    assert.equal(wrapper.childAt(0).text(), "case true");
-    assert.isFalse(warnStub.called);
-
-    wrapper.setProps({ value: false });
-    wrapper.update();
-    {
-      assert.lengthOf(wrapper.children(), 1);
-      assert.equal(wrapper.childAt(0).text(), "case false");
-      assert.isFalse(warnStub.called);
-    }
-  });
-
-  it("should render default if no boolean value match", () => {
-    const warnStub = sinon.stub(console, "warn");
-    const wrapper = mount(
-      <Switch value={true}>
-        <Case for={false}>case false</Case>
-        <Default>default case</Default>
-      </Switch>
-    );
-
-    assert.lengthOf(wrapper.children(), 1);
-    assert.equal(wrapper.childAt(0).text(), "default case");
-    assert.isFalse(warnStub.called);
-  });
-
-  it("should render matching case for string value", () => {
-    const warnStub = sinon.stub(console, "warn");
-    const wrapper = mount(
-      <Switch value={"foo"}>
-        <Case for={"foo"}>case foo</Case>
-        <Case for={"bar"}>case bar</Case>
-        <Default>default case</Default>
-      </Switch>
-    );
-
-    assert.lengthOf(wrapper.children(), 1);
-    assert.equal(wrapper.childAt(0).text(), "case foo");
-    assert.isFalse(warnStub.called);
-
-    wrapper.setProps({ value: "bar" });
-    wrapper.update();
-    {
-      assert.lengthOf(wrapper.children(), 1);
-      assert.equal(wrapper.childAt(0).text(), "case bar");
-      assert.isFalse(warnStub.called);
-    }
-
-    wrapper.setProps({ value: false });
-    wrapper.update();
-    {
-      assert.lengthOf(wrapper.children(), 1);
-      assert.equal(wrapper.childAt(0).text(), "default case");
-      assert.isFalse(warnStub.called);
-    }
-  });
-
-  it("should render matching case for mixed value types", () => {
-    const warnStub = sinon.stub(console, "warn");
-    const wrapper = mount(
-      <Switch value={1}>
-        <Case for={"foo"}>case foo</Case>
-        <Case for={2}>case 2</Case>
-        <Case for={false}>case false</Case>
-        <Default>default case</Default>
-      </Switch>
-    );
-
-    assert.lengthOf(wrapper.children(), 1);
-    assert.equal(wrapper.childAt(0).text(), "default case");
-    assert.isFalse(warnStub.called);
-
-    wrapper.setProps({ value: "foo" });
-    wrapper.update();
-    {
-      assert.lengthOf(wrapper.children(), 1);
-      assert.equal(wrapper.childAt(0).text(), "case foo");
-      assert.isFalse(warnStub.called);
-    }
-
-    wrapper.setProps({ value: 2 });
-    wrapper.update();
-    {
-      assert.lengthOf(wrapper.children(), 1);
-      assert.equal(wrapper.childAt(0).text(), "case 2");
-      assert.isFalse(warnStub.called);
-    }
-
-    wrapper.setProps({ value: false });
-    wrapper.update();
-    {
-      assert.lengthOf(wrapper.children(), 1);
-      assert.equal(wrapper.childAt(0).text(), "case false");
-      assert.isFalse(warnStub.called);
-    }
-
-    wrapper.setProps({ value: {} });
-    wrapper.update();
-    {
-      assert.lengthOf(wrapper.children(), 1);
-      assert.equal(wrapper.childAt(0).text(), "default case");
-      assert.isFalse(warnStub.called);
-    }
-  });
-
-  it("should not affect rendering content in Case or Default components that are not direct children", () => {
-    const warnStub = sinon.stub(console, "warn");
-    const wrapper = mount(
-      <Switch value={1}>
-        <Case for={1}>
-          <Case for="a">
-            <p>case a</p>
-            <Case for="b">case b</Case>
-            <Default>nested default</Default>
-          </Case>
-        </Case>
-        <Case for={2}>case 2</Case>
-        <Default>default</Default>
-      </Switch>
-    );
-
-    assert.lengthOf(wrapper.children(), 1);
-    assert.equal(wrapper.text(), "case acase bnested default");
-    assert.isFalse(warnStub.called);
-
-    wrapper.setProps({ value: 2 });
-    wrapper.update();
-    {
-      assert.equal(wrapper.text(), "case 2");
-      assert.isFalse(warnStub.called);
-    }
-
-    wrapper.setProps({ value: 3 });
-    wrapper.update();
-    {
-      assert.equal(wrapper.text(), "default");
-      assert.isFalse(warnStub.called);
-    }
+    });
   });
 });

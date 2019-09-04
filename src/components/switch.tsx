@@ -49,7 +49,7 @@ const isTypeSupported = isType(Default, Case, Loading);
  * @param props
  */
 export class Switch extends React.Component<SwitchProps, SwitchState> {
-  valuePropRef?: SwitchValue;
+  asyncValueProp: any;
 
   constructor(props: SwitchProps) {
     super(props);
@@ -68,23 +68,29 @@ export class Switch extends React.Component<SwitchProps, SwitchState> {
     }
   }
 
-  private processValueProp() {
+  private processValueProp(): void {
     const value = this.extractValue();
 
     if (value instanceof Promise) {
-      this.valuePropRef = this.props.value;
+      if (this.asyncValueProp && this.asyncValueProp.prop === this.props.value) {
+        return;
+      }
+
+      this.asyncValueProp = { prop: this.props.value, promise: value };
+      console.log("updated this.asyncValueProp: ", this.props.value);
 
       this.setState({ loading: true });
 
       (value as Promise<SwitchValue>).then(
         resolvedValue => {
-          if (this.valuePropRef === this.props.value) {
+          if (this.asyncValueProp && this.asyncValueProp.promise === value) {
+            console.log("update state: ", resolvedValue);
             // If value prop reference intact, update state from async completion
             this.setState({ value: resolvedValue, loading: false });
           }
         },
         () => {
-          if (this.valuePropRef === this.props.value) {
+          if (this.asyncValueProp && this.asyncValueProp.promise === value) {
             // If value prop reference intact and error occurred, update error state
             this.setState({ value: undefined, loading: false });
           }
@@ -95,17 +101,17 @@ export class Switch extends React.Component<SwitchProps, SwitchState> {
     }
   }
 
-  componentDidMount() {
+  componentDidMount(): void {
     this.processValueProp();
   }
 
-  componentDidUpdate(prevProps: SwitchProps) {
+  componentDidUpdate(prevProps: SwitchProps): void {
     if (this.props.value !== prevProps.value) {
       this.processValueProp();
     }
   }
 
-  render() {
+  render(): JSX.Element | null {
     const childrenArray = Array.isArray(this.props.children) ? this.props.children : [this.props.children];
 
     if (!childrenArray.every(isTypeSupported)) {
