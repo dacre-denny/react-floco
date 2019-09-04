@@ -223,7 +223,7 @@ describe("Switch", () => {
   });
 
   describe("When Case is rendered", () => {
-    it("dacre Should render Case children that match value", async () => {
+    it("Should render Case children that match value", async () => {
       const warnStub = sinon.stub(console, "warn");
       const wrapper = mount(
         <Switch value={1}>
@@ -247,7 +247,7 @@ describe("Switch", () => {
       assert.isFalse(warnStub.called);
     });
 
-    it("dacre Should render Case children that match resolved async value", async () => {
+    it("Should render Case children that match resolved async value", async () => {
       const deferredValue = deferred();
       const warnStub = sinon.stub(console, "warn");
       const wrapper = mount(
@@ -269,7 +269,7 @@ describe("Switch", () => {
       assert.isFalse(warnStub.called);
     });
 
-    it("dacre Should render Case children that match callback value", async () => {
+    it("Should render Case children that match callback value", async () => {
       const warnStub = sinon.stub(console, "warn");
       const wrapper = mount(
         <Switch value={() => 2}>

@@ -125,5 +125,7 @@ export class Switch extends React.Component<SwitchProps, SwitchState> {
     if (defaults.length) {
       return <>{defaults}</>;
     }
+
+    return null;
   }
 }
