@@ -4,9 +4,9 @@ import { isFunction, SwitchValue } from "../helpers";
 import { Loading } from "./loading";
 import { Case, CaseProps } from "./case";
 
-type ValueOrPromise<T> = () => T | Promise<T>;
-type SwitchProps = { value: SwitchValue | ValueOrPromise<SwitchValue> };
-type SwitchData = { loading: boolean; value?: SwitchValue };
+type FunctionOrValue<T> = T | (() => T);
+type SwitchProps = { value: FunctionOrValue<Promise<SwitchValue>> | FunctionOrValue<SwitchValue> };
+type SwitchState = { loading: boolean; value?: SwitchValue };
 
 const isType = (...types: any) => (node: React.ReactNode): boolean => {
   const element = node as React.ReactElement;
@@ -48,77 +48,82 @@ const isTypeSupported = isType(Default, Case, Loading);
  *
  * @param props
  */
-export const Switch = (props: React.PropsWithChildren<SwitchProps>): React.ReactElement | null => {
-  const valueRef = React.useRef<SwitchValue>();
-  const [data, setData] = React.useState<SwitchData>({
-    value: undefined,
-    loading: false
-  });
+export class Switch extends React.Component<SwitchProps, SwitchState> {
+  valuePropRef?: SwitchValue;
 
-  console.log("data", data);
-  const evaluateValue = async (value: SwitchValue) => {
-    if (isFunction(value)) {
-      const result = (value as Function)();
-      if (result instanceof Promise) {
-        // Only set loading state for promises
-        setData(state => ({ ...state, loading: true }));
+  constructor(props: SwitchProps) {
+    super(props);
 
-        await result;
-      }
-
-      return result;
-    } else {
-      return value;
-    }
-  };
-
-  const onValueChanged = async () => {
-    try {
-      // Value prop reference used determine if prop still same after async evaluation
-      valueRef.current = props.value;
-
-      const result = await evaluateValue(props.value);
-
-      if (valueRef.current === props.value) {
-        // If value prop reference intact, update state from async completion
-        setData(state => ({ ...state, value: result, loading: false }));
-      }
-    } catch {
-      if (valueRef.current === props.value) {
-        // If value prop reference intact and error occurred, update error state
-        setData(state => ({ ...state, value: undefined, loading: false }));
-      }
-    }
-  };
-
-  React.useEffect(() => {
-    onValueChanged();
-
-    return () => {
-      // When value changes, reset state to ready for next async/sync/value prop
-      setData(state => ({ ...state, loading: false }));
+    this.state = {
+      loading: false,
+      value: props.value
     };
-  }, [props.value]);
-
-  const childrenArray = Array.isArray(props.children) ? props.children : [props.children];
-
-  if (!childrenArray.every(isTypeSupported)) {
-    console.warn(`Switch: only Case or Default children are supported`);
   }
 
-  if (data.loading) {
-    return <>{childrenArray.filter(isType(Loading))}</>;
+  private extractValue(): SwitchValue {
+    if (isFunction(this.props.value)) {
+      return (this.props.value as Function)();
+    } else {
+      return this.props.value;
+    }
   }
 
-  const cases = childrenArray.filter(isTypeCaseMatch(data.value));
-  if (cases.length) {
-    return <>{cases}</>;
+  private processValueProp() {
+    const value = this.extractValue();
+
+    if (value instanceof Promise) {
+      this.valuePropRef = this.props.value;
+
+      this.setState({ loading: true });
+
+      (value as Promise<SwitchValue>).then(
+        resolvedValue => {
+          if (this.valuePropRef === this.props.value) {
+            // If value prop reference intact, update state from async completion
+            this.setState({ value: resolvedValue, loading: false });
+          }
+        },
+        () => {
+          if (this.valuePropRef === this.props.value) {
+            // If value prop reference intact and error occurred, update error state
+            this.setState({ value: undefined, loading: false });
+          }
+        }
+      );
+    } else {
+      this.setState({ value: value, loading: false });
+    }
   }
 
-  const defaults = childrenArray.filter(isType(Default));
-  if (defaults.length) {
-    return <>{defaults}</>;
+  componentDidMount() {
+    this.processValueProp();
   }
 
-  return null;
-};
+  componentDidUpdate(prevProps: SwitchProps) {
+    if (this.props.value !== prevProps.value) {
+      this.processValueProp();
+    }
+  }
+
+  render() {
+    const childrenArray = Array.isArray(this.props.children) ? this.props.children : [this.props.children];
+
+    if (!childrenArray.every(isTypeSupported)) {
+      console.warn(`Switch: only Case or Default children are supported`);
+    }
+
+    if (this.state.loading) {
+      return <>{childrenArray.filter(isType(Loading))}</>;
+    }
+
+    const cases = childrenArray.filter(isTypeCaseMatch(this.state.value));
+    if (cases.length) {
+      return <>{cases}</>;
+    }
+
+    const defaults = childrenArray.filter(isType(Default));
+    if (defaults.length) {
+      return <>{defaults}</>;
+    }
+  }
+}

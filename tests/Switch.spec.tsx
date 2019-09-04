@@ -223,8 +223,7 @@ describe("Switch", () => {
   });
 
   describe("When Case is rendered", () => {
-    it("Should render Case children that match value", async () => {
-      console.log("x-xx-xx-xx-xx-xx-xx-xx-xx-xx-xx-xx-x");
+    it("dacre Should render Case children that match value", async () => {
       const warnStub = sinon.stub(console, "warn");
       const wrapper = mount(
         <Switch value={1}>
@@ -234,23 +233,55 @@ describe("Switch", () => {
           <Default>default case</Default>
         </Switch>
       );
+      /*
+      works...
+      console.log("wrapper.setProps({ value: 2 });");
+      wrapper.setProps({ value: 2 });
+      
+      await tick(1);
+      wrapper.update();\
+      */
 
-      // console.log(wrapper.debug());
-      // console.log("------------------------------------------------------------");
-      // wrapper.update();
-      // await tick();
-
-      // await wrapper.instance().forceUpdate();
-      wrapper.update();
-      await tick();
-      // wrapper.update();
-      // await tick(1001);
-      console.log(wrapper.debug());
-
-      //assert.isTrue(wrapper.containsMatchingElement(<Case for={1}>case 1</Case>));
-      //assert.isTrue(wrapper.containsAllMatchingElements([<Case for={1}>case 1</Case>, <Case for={1}>bar</Case>]));
-      console.log("zzzzzzzz-zzzzzzzzzz");
+      assert.isTrue(wrapper.containsAllMatchingElements([<Case for={1}>case 1</Case>, <Case for={1}>bar</Case>]));
       assert.equal(wrapper.children().length, 2);
+      assert.isFalse(warnStub.called);
+    });
+
+    it("dacre Should render Case children that match resolved async value", async () => {
+      const deferredValue = deferred();
+      const warnStub = sinon.stub(console, "warn");
+      const wrapper = mount(
+        <Switch value={deferredValue.promiseFunction}>
+          <Case for={1}>case 1</Case>
+          <Case for={2}>case 2</Case>
+          <Case for={1}>bar</Case>
+          <Default>default case</Default>
+        </Switch>
+      );
+
+      assert.isTrue(wrapper.isEmptyRender());
+
+      await deferredValue.resolve(1);
+      wrapper.update();
+
+      assert.isTrue(wrapper.containsAllMatchingElements([<Case for={1}>case 1</Case>, <Case for={1}>bar</Case>]));
+      assert.equal(wrapper.children().length, 2);
+      assert.isFalse(warnStub.called);
+    });
+
+    it("dacre Should render Case children that match callback value", async () => {
+      const warnStub = sinon.stub(console, "warn");
+      const wrapper = mount(
+        <Switch value={() => 2}>
+          <Case for={1}>case 1</Case>
+          <Case for={2}>case 2</Case>
+          <Case for={1}>bar</Case>
+          <Default>default case</Default>
+        </Switch>
+      );
+
+      assert.isTrue(wrapper.containsAllMatchingElements([<Case for={2}>case 2</Case>]));
+      assert.equal(wrapper.children().length, 1);
       assert.isFalse(warnStub.called);
     });
   });
