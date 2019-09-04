@@ -56,7 +56,7 @@ export class Switch extends React.Component<SwitchProps, SwitchState> {
 
     this.state = {
       loading: false,
-      value: props.value
+      value: undefined
     };
   }
 
