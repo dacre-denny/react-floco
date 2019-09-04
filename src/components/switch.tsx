@@ -49,7 +49,7 @@ const isTypeSupported = isType(Default, Case, Loading);
  * @param props
  */
 export class Switch extends React.Component<SwitchProps, SwitchState> {
-  asyncValueProp: any;
+  pendingPromise?: Promise<SwitchValue>;
 
   constructor(props: SwitchProps) {
     super(props);
@@ -72,31 +72,27 @@ export class Switch extends React.Component<SwitchProps, SwitchState> {
     const value = this.extractValue();
 
     if (value instanceof Promise) {
-      if (this.asyncValueProp && this.asyncValueProp.prop === this.props.value) {
-        return;
-      }
+      const promise = value as Promise<SwitchValue>;
 
-      this.asyncValueProp = { prop: this.props.value, promise: value };
-      console.log("updated this.asyncValueProp: ", this.props.value);
-
+      this.pendingPromise = promise;
       this.setState({ loading: true });
 
-      (value as Promise<SwitchValue>).then(
+      promise.then(
         resolvedValue => {
-          if (this.asyncValueProp && this.asyncValueProp.promise === value) {
-            console.log("update state: ", resolvedValue);
+          if (this.pendingPromise === promise) {
             // If value prop reference intact, update state from async completion
             this.setState({ value: resolvedValue, loading: false });
           }
         },
         () => {
-          if (this.asyncValueProp && this.asyncValueProp.promise === value) {
+          if (this.pendingPromise === promise) {
             // If value prop reference intact and error occurred, update error state
             this.setState({ value: undefined, loading: false });
           }
         }
       );
     } else {
+      this.pendingPromise = undefined;
       this.setState({ value: value, loading: false });
     }
   }

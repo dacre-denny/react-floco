@@ -364,19 +364,11 @@ describe("The Switch component", () => {
 
       assert.isTrue(wrapper.containsMatchingElement(<Case for={3}>case 3</Case>));
       assert.equal(wrapper.children().length, 1);
-
-      wrapper.setProps({ value: deferredValue.promise });
-      await tick();
-      wrapper.update();
-
-      assert.isTrue(wrapper.containsMatchingElement(<Case for={1}>case 1</Case>));
-      assert.equal(wrapper.children().length, 1);
     });
 
-    it("Should render Case children that match updated value if prior async value not resolved", async () => {
+    it("Should render Case children that match updated value if prior async value not rejected", async () => {
       const warnStub = sinon.stub(console, "warn");
-      const deferredValueA = deferred();
-      const deferredValueB = deferred();
+      const deferredValue = deferred();
 
       const wrapper = mount(
         <Switch value={null}>
@@ -386,36 +378,12 @@ describe("The Switch component", () => {
         </Switch>
       );
 
-      wrapper.setProps({ value: deferredValueA.promiseFunction });
-      await tick();
+      wrapper.setProps({ value: deferredValue.promiseFunction });
       wrapper.update();
 
       assert.isTrue(wrapper.isEmptyRender());
       assert.isFalse(warnStub.called);
 
-      wrapper.setProps({ value: deferredValueB.promiseFunction });
-      await tick();
-      wrapper.update();
-
-      assert.isTrue(wrapper.isEmptyRender());
-      assert.isFalse(warnStub.called);
-
-      // Resolve promise after value prop updated
-      await deferredValueA.resolve(1);
-      wrapper.update();
-      console.log(wrapper.debug());
-      return;
-      assert.isTrue(wrapper.isEmptyRender());
-      assert.isFalse(warnStub.called);
-
-      // Resolve promise after value prop updated
-      await deferredValueB.resolve(2);
-      wrapper.update();
-
-      assert.isTrue(wrapper.containsMatchingElement(<Case for={2}>case 2</Case>));
-      assert.equal(wrapper.children().length, 1);
-
-      return;
       // Change value before promise resolved
       wrapper.setProps({ value: 3 });
       wrapper.update();
@@ -423,18 +391,11 @@ describe("The Switch component", () => {
       assert.isTrue(wrapper.containsMatchingElement(<Case for={3}>case 3</Case>));
       assert.equal(wrapper.children().length, 1);
 
-      // Resolve promise after value prop updated
-      await deferredValueA.resolve(1);
+      // Reject promise after value prop updated
+      await deferredValue.reject(new Error());
       wrapper.update();
 
       assert.isTrue(wrapper.containsMatchingElement(<Case for={3}>case 3</Case>));
-      assert.equal(wrapper.children().length, 1);
-
-      wrapper.setProps({ value: deferredValueA.promise });
-      await tick();
-      wrapper.update();
-
-      assert.isTrue(wrapper.containsMatchingElement(<Case for={1}>case 1</Case>));
       assert.equal(wrapper.children().length, 1);
     });
   });
