@@ -6,6 +6,8 @@ import * as React from "react";
  *
  * @param props
  */
-export const Else: React.SFC = props => {
-  return <>{props.children}</>;
-};
+export class Else extends React.Component {
+  render(): JSX.Element | null {
+    return <>{this.props.children}</>;
+  }
+}
