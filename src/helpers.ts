@@ -19,7 +19,9 @@ export const isFunction = (value: unknown): boolean => {
  *
  * @param value
  */
-export const extractValue = <T extends TypedValue>(value: FunctionOrValue<T>): TypedValue => {
+export const extractValue = <T extends TypedValue>(
+  value: FunctionOrValue<T>
+): TypedValue => {
   return isFunction(value) ? (value as Function)() : value;
 };
 
@@ -29,7 +31,9 @@ export const extractValue = <T extends TypedValue>(value: FunctionOrValue<T>): T
  *
  * @param types
  */
-export const isType = (...types: React.JSXElementConstructor<unknown>[]) => (node: React.ReactNode): boolean => {
+export const isType = (...types: React.JSXElementConstructor<unknown>[]) => (
+  node: React.ReactNode
+): boolean => {
   const element = node as React.ReactElement;
 
   if (!element) {

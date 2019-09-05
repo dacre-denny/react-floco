@@ -1,7 +1,7 @@
 {
   "parser": "@typescript-eslint/parser",
-  "extends": ["eslint:recommended", "plugin:react/recommended", "plugin:@typescript-eslint/eslint-recommended", "plugin:@typescript-eslint/recommended"],
-  "plugins": ["@typescript-eslint"],
+  "extends": ["prettier", "eslint:recommended", "plugin:react/recommended", "plugin:@typescript-eslint/eslint-recommended", "plugin:@typescript-eslint/recommended"],
+  "plugins": ["@typescript-eslint", "prettier"],
   "env": {
     "browser": true,
     "node": true
@@ -11,7 +11,8 @@
   },
   "rules": {
     "react/jsx-uses-react": 1,
-    "react/prop-types": 0
+    "react/prop-types": 0,
+    "prettier/prettier": "error"
   },
   "settings": {
     "react": {
