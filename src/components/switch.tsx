@@ -1,20 +1,26 @@
 import * as React from "react";
-import { extractValue, FunctionOrValue, isType, SwitchValue } from "../helpers";
+import { extractValue, FunctionOrValue, isType, TypedValue } from "../helpers";
 import { Case, CaseProps } from "./case";
 import { Default } from "./default";
 import { Loading } from "./loading";
 
-type SwitchProps = { value: FunctionOrValue<Promise<SwitchValue>> | FunctionOrValue<SwitchValue> };
-type SwitchState = { loading: boolean; value?: SwitchValue };
+type SwitchProps = { value: FunctionOrValue<Promise<TypedValue>> | FunctionOrValue<TypedValue> };
+type SwitchState = { loading: boolean; value?: TypedValue };
 
 const isTypeCase = isType(Case);
 const isTypeSupported = isType(Default, Case, Loading);
 
-const isTypeCaseMatch = (value?: SwitchValue) => (node: React.ReactNode): boolean => {
+/**
+ * Helper function returns true if value matches the for prop of supplied Case node. In
+ * all other cases false is returned.
+ *
+ * @param value
+ */
+const isTypeCaseMatch = (value?: TypedValue) => (node: React.ReactNode): boolean => {
   if (value !== undefined && isTypeCase(node)) {
-    if ((node as React.ReactElement<CaseProps>).props.for === value) {
-      return true;
-    }
+    const element = node as React.ReactElement<CaseProps>;
+
+    return element.props.for === value;
   }
 
   return false;
@@ -33,7 +39,7 @@ const isTypeCaseMatch = (value?: SwitchValue) => (node: React.ReactNode): boolea
  * @param props
  */
 export class Switch extends React.Component<SwitchProps, SwitchState> {
-  pendingPromise?: Promise<SwitchValue>;
+  pendingPromise?: Promise<TypedValue>;
 
   constructor(props: SwitchProps) {
     super(props);
@@ -45,32 +51,40 @@ export class Switch extends React.Component<SwitchProps, SwitchState> {
     };
   }
 
+  private onValueResolved(promise: Promise<TypedValue>) {
+    return (value: TypedValue): void => {
+      if (this.pendingPromise === promise) {
+        // If value prop reference intact, update state from async completion
+        this.setState({ value, loading: false });
+      }
+    };
+  }
+
+  private onValueRejected(promise: Promise<TypedValue>) {
+    return (): void => {
+      if (this.pendingPromise === promise) {
+        // If value prop reference intact and error occurred, update error state
+        this.setState({ value: undefined, loading: false });
+      }
+    };
+  }
+
   private onValueChange(): void {
     const value = extractValue(this.props.value);
 
     if (value instanceof Promise) {
-      const promise = value as Promise<SwitchValue>;
+      const promise = value as Promise<TypedValue>;
 
+      // Update pending promise as current promise instance
       this.pendingPromise = promise;
       this.setState({ loading: true });
 
-      promise.then(
-        resolvedValue => {
-          if (this.pendingPromise === promise) {
-            // If value prop reference intact, update state from async completion
-            this.setState({ value: resolvedValue, loading: false });
-          }
-        },
-        () => {
-          if (this.pendingPromise === promise) {
-            // If value prop reference intact and error occurred, update error state
-            this.setState({ value: undefined, loading: false });
-          }
-        }
-      );
+      promise.then(this.onValueResolved(promise), this.onValueRejected(promise));
     } else {
+      // If value is non-promise, clear the pending promise flag blocking and previously
+      // pending promise from updating state
       this.pendingPromise = undefined;
-      this.setState({ value: value, loading: false });
+      this.setState({ value, loading: false });
     }
   }
 
@@ -86,6 +100,10 @@ export class Switch extends React.Component<SwitchProps, SwitchState> {
 
   render(): JSX.Element | null {
     const childrenArray = Array.isArray(this.props.children) ? this.props.children : [this.props.children];
+
+    if (this.props.value === undefined) {
+      console.warn(`Switch: value prop must not be undefined`);
+    }
 
     if (!childrenArray.every(isTypeSupported)) {
       console.warn(`Switch: only Case or Default children are supported`);

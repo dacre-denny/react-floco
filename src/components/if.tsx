@@ -2,17 +2,16 @@ import * as React from "react";
 import { PropsWithChildren } from "react";
 import { Else } from "./else";
 import { Loading } from "./loading";
-import { isFunction } from "../helpers";
+import { isFunction, TypedValue, extractValue, FunctionOrValue, isType } from "../helpers";
 
 type BooleanFunction = () => boolean | Promise<boolean>;
-type Condition = BooleanFunction | boolean;
-type IfProps = { condition: Condition };
 
-const isTypeLoading = (element: React.ReactNode): boolean => !!element && (element as React.ReactElement).type === Loading;
+type IfProps = { condition: FunctionOrValue<Promise<TypedValue>> | FunctionOrValue<TypedValue> };
+type IfState = { loading: boolean; condition?: TypedValue };
 
-const isTypeElse = (element: React.ReactNode): boolean => !!element && (element as React.ReactElement).type === Else;
-
-const isTypeNotElseNotLoading = (element: React.ReactNode): boolean => !!element && (element as React.ReactElement).type !== Else && (element as React.ReactElement).type !== Loading;
+const isTypeLoading = isType(Loading);
+const isTypeElse = isType(Else);
+const isTypeNotElseNotLoading = (element: React.ReactNode): boolean => !isType(Else, Loading);
 
 /**
  * If component provides conditional rendering of inner content when condition prop:
@@ -24,49 +23,79 @@ const isTypeNotElseNotLoading = (element: React.ReactNode): boolean => !!element
  *
  * @param props
  */
-export const If: React.SFC<PropsWithChildren<IfProps>> = props => {
-  const { children, condition } = props;
+export class If extends React.Component<IfProps, IfState> {
+  pendingPromise?: Promise<TypedValue>;
 
-  if (condition === null || condition === undefined) {
-    console.warn(`If: condition prop must be boolean or function`);
-    return null;
+  constructor(props: IfProps) {
+    super(props);
+
+    this.pendingPromise = undefined;
+    this.state = {
+      loading: false,
+      condition: undefined
+    };
   }
 
-  const [cond, setCondition] = React.useState<boolean>();
-
-  React.useEffect(() => {
-    if (isFunction(props.condition)) {
-      const value = (condition as BooleanFunction)();
-      if (value instanceof Promise) {
-        setCondition(undefined);
-        (value as Promise<boolean>).then(c => setCondition(c), () => setCondition(false));
-      } else if (typeof value === "boolean") {
-        setCondition(value);
+  private onValueResolved(promise: Promise<TypedValue>) {
+    return (condition: TypedValue): void => {
+      if (this.pendingPromise === promise) {
+        // If value prop reference intact, update state from async completion
+        this.setState({ condition, loading: false });
       }
-    } else if (typeof condition === "boolean") {
-      setCondition(condition);
-    }
-  }, [condition]);
+    };
+  }
 
-  if (Array.isArray(children)) {
-    if (cond === true) {
-      return <>{children.filter(isTypeNotElseNotLoading)}</>;
-    } else if (cond === false) {
-      return <>{children.filter(isTypeElse)}</>;
+  private onValueRejected(promise: Promise<TypedValue>) {
+    return (): void => {
+      if (this.pendingPromise === promise) {
+        // If value prop reference intact and error occurred, update error state
+        this.setState({ condition: undefined, loading: false });
+      }
+    };
+  }
+
+  private onValueChange(): void {
+    const condition = extractValue(this.props.condition);
+
+    if (condition instanceof Promise) {
+      const promise = condition as Promise<TypedValue>;
+
+      // Update pending promise as current promise instance
+      this.pendingPromise = promise;
+      this.setState({ loading: true });
+
+      promise.then(this.onValueResolved(promise), this.onValueRejected(promise));
     } else {
-      return <>{children.filter(isTypeLoading)}</>;
+      // If value is non-promise, clear the pending promise flag blocking and previously
+      // pending promise from updating state
+      this.pendingPromise = undefined;
+      this.setState({ condition, loading: false });
     }
   }
 
-  if (children) {
-    if (cond === true && isTypeNotElseNotLoading(children)) {
-      return <>{children}</>;
-    } else if (cond === false && isTypeElse(children)) {
-      return <>{children}</>;
-    } else if (isTypeLoading(children)) {
-      return <>{children}</>;
+  componentDidMount(): void {
+    this.onValueChange();
+  }
+
+  componentDidUpdate(prevProps: IfProps): void {
+    if (this.props.condition !== prevProps.condition) {
+      this.onValueChange();
     }
   }
 
-  return null;
-};
+  render(): JSX.Element | null {
+    const childrenArray = Array.isArray(this.props.children) ? this.props.children : [this.props.children];
+
+    if (this.props.condition === undefined) {
+      console.warn(`If: condition prop must not be undefined`);
+    }
+
+    if (this.state.loading) {
+      return <>{childrenArray.filter(isTypeLoading)}</>;
+    } else if (this.state.condition === false) {
+      return <>{childrenArray.filter(isTypeElse)}</>;
+    } else {
+      return <>{childrenArray.filter(isTypeNotElseNotLoading)}</>;
+    }
+  }
+}

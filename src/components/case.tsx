@@ -1,7 +1,7 @@
 import * as React from "react";
-import { SwitchValue } from "../helpers";
+import { TypedValue } from "../helpers";
 
-export type CaseProps = { for: SwitchValue };
+export type CaseProps = { for: TypedValue };
 
 /**
  * Encloses content that is rendered in a Switch block when no Case matches the current Switch value.
