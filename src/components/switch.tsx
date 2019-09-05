@@ -99,8 +99,11 @@ export class Switch extends React.Component<SwitchProps, SwitchState> {
   }
 
   render(): JSX.Element | null {
-    const childrenArray = Array.isArray(this.props.children) ? this.props.children : [this.props.children];
+    if (!this.props.children) {
+      return null;
+    }
 
+    const childrenArray = Array.isArray(this.props.children) ? this.props.children : [this.props.children];
     if (this.props.value === undefined) {
       console.warn(`Switch: value prop must not be undefined`);
     }

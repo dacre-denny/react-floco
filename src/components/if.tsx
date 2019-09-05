@@ -33,7 +33,7 @@ export class If extends React.Component<IfProps, IfState> {
     };
   }
 
-  private onValueResolved(promise: Promise<TypedValue>) {
+  private onConditionResolved(promise: Promise<TypedValue>) {
     return (condition: TypedValue): void => {
       if (this.pendingPromise === promise) {
         // If value prop reference intact, update state from async completion
@@ -42,7 +42,7 @@ export class If extends React.Component<IfProps, IfState> {
     };
   }
 
-  private onValueRejected(promise: Promise<TypedValue>) {
+  private onConditionRejected(promise: Promise<TypedValue>) {
     return (): void => {
       if (this.pendingPromise === promise) {
         // If value prop reference intact and error occurred, update error state
@@ -51,7 +51,7 @@ export class If extends React.Component<IfProps, IfState> {
     };
   }
 
-  private onValueChange(): void {
+  private onConditionChange(): void {
     const condition = extractValue(this.props.condition);
 
     if (condition instanceof Promise) {
@@ -61,7 +61,7 @@ export class If extends React.Component<IfProps, IfState> {
       this.pendingPromise = promise;
       this.setState({ loading: true });
 
-      promise.then(this.onValueResolved(promise), this.onValueRejected(promise));
+      promise.then(this.onConditionResolved(promise), this.onConditionRejected(promise));
     } else {
       // If value is non-promise, clear the pending promise flag blocking and previously
       // pending promise from updating state
@@ -71,12 +71,12 @@ export class If extends React.Component<IfProps, IfState> {
   }
 
   componentDidMount(): void {
-    this.onValueChange();
+    this.onConditionChange();
   }
 
   componentDidUpdate(prevProps: IfProps): void {
     if (this.props.condition !== prevProps.condition) {
-      this.onValueChange();
+      this.onConditionChange();
     }
   }
 
