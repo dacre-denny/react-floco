@@ -2,11 +2,11 @@ import { assert } from "chai";
 import { mount } from "enzyme";
 import * as React from "react";
 import * as sinon from "sinon";
-import { Loading } from "../src/components/loading";
 import { Case } from "../src/components/case";
 import { Default } from "../src/components/default";
+import { Loading } from "../src/components/loading";
 import { Switch } from "../src/components/switch";
-import { deferred, tick } from "./async";
+import { deferred } from "./async";
 
 describe("The Switch component", () => {
   afterEach(function() {

@@ -7,7 +7,7 @@ import { If } from "../src/components/if";
 import { Else } from "../src/components/else";
 import { Loading } from "../src/components/loading";
 
-describe("If", () => {
+describe("The If component", () => {
   afterEach(function() {
     sinon.restore();
   });
