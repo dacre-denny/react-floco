@@ -1,8 +1,11 @@
 import * as React from "react";
-import { isNumber, TypedFunction } from "../helpers";
-import { isFunction } from "util";
+import { TypedFunction, isFunction } from "../helpers";
 
 type RepeatProps<T> = { times: number; children?: TypedFunction<{ key: number } & T, React.ReactElement> } & T;
+
+const isNumber = (value: unknown): boolean => {
+  return Number.isNaN(Number.parseInt(`${value}`)) === false;
+};
 
 /**
  * Repeats rendering of inner content by number specified on times prop.

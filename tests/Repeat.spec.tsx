@@ -4,7 +4,7 @@ import * as React from "react";
 import * as sinon from "sinon";
 import { Repeat } from "../src/components/repeat";
 
-describe("Repeat", () => {
+describe("The Repeat component", () => {
   afterEach(function() {
     sinon.restore();
   });
