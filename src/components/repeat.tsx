@@ -15,7 +15,7 @@ export class Repeat<T extends object> extends React.Component<RepeatProps<T>> {
     this.renderIteration = this.renderIteration.bind(this);
   }
 
-  onProcessProps(props: RepeatProps<T>) {
+  onProcessProps(props: RepeatProps<T>): void {
     if (!isNumber(props.times)) {
       console.warn(`Repeat: times prop must be valid number`);
     } else if (props.times < 0) {
