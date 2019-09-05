@@ -9,7 +9,7 @@ import { Switch } from "../src/components/switch";
 import { deferred } from "./async";
 
 describe("The Switch component", () => {
-  afterEach(function() {
+  afterEach(() => {
     sinon.restore();
   });
 

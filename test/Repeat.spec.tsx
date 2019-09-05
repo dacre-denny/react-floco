@@ -5,7 +5,7 @@ import * as sinon from "sinon";
 import { Repeat } from "../src/components/repeat";
 
 describe("The Repeat component", () => {
-  afterEach(function() {
+  afterEach(() => {
     sinon.restore();
   });
 

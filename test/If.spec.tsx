@@ -2,13 +2,13 @@ import { assert } from "chai";
 import { mount } from "enzyme";
 import * as React from "react";
 import * as sinon from "sinon";
-import { deferred, tick } from "./async";
-import { If } from "../src/components/if";
 import { Else } from "../src/components/else";
+import { If } from "../src/components/if";
 import { Loading } from "../src/components/loading";
+import { deferred } from "./async";
 
 describe("The If component", () => {
-  afterEach(function() {
+  afterEach(() => {
     sinon.restore();
   });
 

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { extractValue, FunctionOrValue, isType, TypedValue } from "../helpers";
+import { extractValue, FunctionOrValue, isType, TypedValue, TypedFunction } from "../helpers";
 import { Case, CaseProps } from "./case";
 import { Default } from "./default";
 import { Loading } from "./loading";
@@ -51,7 +51,7 @@ export class Switch extends React.Component<SwitchProps, SwitchState> {
     };
   }
 
-  private onValueResolved(promise: Promise<TypedValue>) {
+  private onValueResolved(promise: Promise<TypedValue>): TypedFunction<Promise<TypedValue>, unknown> {
     return (value: TypedValue): void => {
       if (this.pendingPromise === promise) {
         // If value prop reference intact, update state from async completion
@@ -60,7 +60,7 @@ export class Switch extends React.Component<SwitchProps, SwitchState> {
     };
   }
 
-  private onValueRejected(promise: Promise<TypedValue>) {
+  private onValueRejected(promise: Promise<TypedValue>): TypedFunction<Promise<TypedValue>, unknown> {
     return (): void => {
       if (this.pendingPromise === promise) {
         // If value prop reference intact and error occurred, update error state
@@ -92,17 +92,17 @@ export class Switch extends React.Component<SwitchProps, SwitchState> {
     }
   }
 
-  componentDidMount(): void {
+  public componentDidMount(): void {
     this.onValueChange();
   }
 
-  componentDidUpdate(prevProps: SwitchProps): void {
+  public componentDidUpdate(prevProps: SwitchProps): void {
     if (this.props.value !== prevProps.value) {
       this.onValueChange();
     }
   }
 
-  render(): JSX.Element | null {
+  public render(): JSX.Element | null {
     if (!this.props.children) {
       return null;
     }

@@ -9,17 +9,17 @@ export const deferred = <T>() => {
   return {
     promise,
     promiseFunction: () => promise,
-    resolve: async (value: T) => {
-      if (resolve) {
-        resolve(value);
-        resolve = undefined;
-        return tick();
-      }
-    },
     reject: async (err: Error) => {
       if (reject) {
         reject(err);
         reject = undefined;
+        return tick();
+      }
+    },
+    resolve: async (value: T) => {
+      if (resolve) {
+        resolve(value);
+        resolve = undefined;
         return tick();
       }
     }

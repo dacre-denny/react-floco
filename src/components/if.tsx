@@ -1,5 +1,5 @@
 import * as React from "react";
-import { extractValue, FunctionOrValue, isType, TypedValue } from "../helpers";
+import { extractValue, FunctionOrValue, isType, TypedValue, TypedFunction } from "../helpers";
 import { Else } from "./else";
 import { Loading } from "./loading";
 
@@ -21,19 +21,19 @@ const isTypeNotElseNotLoading = (element: React.ReactNode): boolean => !isType(E
  * @param props
  */
 export class If extends React.Component<IfProps, IfState> {
-  pendingPromise?: Promise<TypedValue>;
+  private pendingPromise?: Promise<TypedValue>;
 
   constructor(props: IfProps) {
     super(props);
 
     this.pendingPromise = undefined;
     this.state = {
-      loading: false,
-      condition: undefined
+      condition: undefined,
+      loading: false
     };
   }
 
-  private onConditionResolved(promise: Promise<TypedValue>) {
+  private onConditionResolved(promise: Promise<TypedValue>): TypedFunction<Promise<TypedValue>, unknown> {
     return (condition: TypedValue): void => {
       if (this.pendingPromise === promise) {
         // If value prop reference intact, update state from async completion
@@ -42,7 +42,7 @@ export class If extends React.Component<IfProps, IfState> {
     };
   }
 
-  private onConditionRejected(promise: Promise<TypedValue>) {
+  private onConditionRejected(promise: Promise<TypedValue>): TypedFunction<Promise<TypedValue>, unknown> {
     return (): void => {
       if (this.pendingPromise === promise) {
         // If value prop reference intact and error occurred, update error state
@@ -74,17 +74,17 @@ export class If extends React.Component<IfProps, IfState> {
     }
   }
 
-  componentDidMount(): void {
+  public componentDidMount(): void {
     this.onConditionChange();
   }
 
-  componentDidUpdate(prevProps: IfProps): void {
+  public componentDidUpdate(prevProps: IfProps): void {
     if (this.props.condition !== prevProps.condition) {
       this.onConditionChange();
     }
   }
 
-  render(): JSX.Element | null {
+  public render(): JSX.Element | null {
     const childrenArray = Array.isArray(this.props.children) ? this.props.children : [this.props.children];
 
     if (this.state.loading) {

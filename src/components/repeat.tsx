@@ -18,7 +18,11 @@ export class Repeat<T extends object> extends React.Component<RepeatProps<T>> {
     this.renderIteration = this.renderIteration.bind(this);
   }
 
-  onProcessProps(props: RepeatProps<T>): void {
+  private renderIteration(_: unknown, key: number): JSX.Element | null {
+    return this.props.children({ key, ...this.props });
+  }
+
+  private onProcessProps(props: RepeatProps<T>): void {
     if (!isNumber(props.times)) {
       console.warn(`Repeat: times prop must be valid number`);
     } else if (props.times < 0) {
@@ -30,19 +34,15 @@ export class Repeat<T extends object> extends React.Component<RepeatProps<T>> {
     }
   }
 
-  componentDidMount(): void {
+  public componentDidMount(): void {
     this.onProcessProps(this.props);
   }
 
-  componentDidUpdate(): void {
+  public componentDidUpdate(): void {
     this.onProcessProps(this.props);
   }
 
-  renderIteration(_: unknown, key: number): JSX.Element | null {
-    return this.props.children({ key, ...this.props });
-  }
-
-  render(): JSX.Element | null {
+  public render(): JSX.Element | null {
     if (!isFunction(this.props.children)) {
       return null;
     }
