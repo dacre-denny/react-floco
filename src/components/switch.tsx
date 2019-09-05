@@ -38,6 +38,7 @@ export class Switch extends React.Component<SwitchProps, SwitchState> {
   constructor(props: SwitchProps) {
     super(props);
 
+    this.pendingPromise = undefined;
     this.state = {
       loading: false,
       value: undefined

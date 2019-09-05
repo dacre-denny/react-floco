@@ -5,6 +5,8 @@ import * as React from "react";
  *
  * @param props
  */
-export const Loading: React.SFC = props => {
-  return <>{props.children}</>;
-};
+export class Loading extends React.Component {
+  render(): JSX.Element | null {
+    return <>{this.props.children}</>;
+  }
+}

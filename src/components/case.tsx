@@ -8,6 +8,8 @@ export type CaseProps = { for: SwitchValue };
  *
  * @param props
  */
-export const Case: React.SFC<CaseProps> = props => {
-  return <>{props.children}</>;
-};
+export class Case extends React.Component<CaseProps> {
+  render(): JSX.Element | null {
+    return <>{this.props.children}</>;
+  }
+}
