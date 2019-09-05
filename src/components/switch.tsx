@@ -1,31 +1,17 @@
 import * as React from "react";
-import { Default } from "./default";
-import { isFunction, SwitchValue } from "../helpers";
-import { Loading } from "./loading";
+import { extractValue, FunctionOrValue, isType, SwitchValue } from "../helpers";
 import { Case, CaseProps } from "./case";
+import { Default } from "./default";
+import { Loading } from "./loading";
 
-type FunctionOrValue<T> = T | (() => T);
 type SwitchProps = { value: FunctionOrValue<Promise<SwitchValue>> | FunctionOrValue<SwitchValue> };
 type SwitchState = { loading: boolean; value?: SwitchValue };
 
-const isType = (...types: any) => (node: React.ReactNode): boolean => {
-  const element = node as React.ReactElement;
-
-  if (!element) {
-    return false;
-  }
-
-  for (const type of types) {
-    if (type === element.type) {
-      return true;
-    }
-  }
-
-  return false;
-};
+const isTypeCase = isType(Case);
+const isTypeSupported = isType(Default, Case, Loading);
 
 const isTypeCaseMatch = (value?: SwitchValue) => (node: React.ReactNode): boolean => {
-  if (value !== undefined && isType(Case)(node)) {
+  if (value !== undefined && isTypeCase(node)) {
     if ((node as React.ReactElement<CaseProps>).props.for === value) {
       return true;
     }
@@ -33,8 +19,6 @@ const isTypeCaseMatch = (value?: SwitchValue) => (node: React.ReactNode): boolea
 
   return false;
 };
-
-const isTypeSupported = isType(Default, Case, Loading);
 
 /**
  * Switch component provides conditional rendering of inner content for Case blocks that
@@ -60,16 +44,8 @@ export class Switch extends React.Component<SwitchProps, SwitchState> {
     };
   }
 
-  private extractValue(): SwitchValue {
-    if (isFunction(this.props.value)) {
-      return (this.props.value as Function)();
-    } else {
-      return this.props.value;
-    }
-  }
-
-  private processValueProp(): void {
-    const value = this.extractValue();
+  private onValueChange(): void {
+    const value = extractValue(this.props.value);
 
     if (value instanceof Promise) {
       const promise = value as Promise<SwitchValue>;
@@ -98,12 +74,12 @@ export class Switch extends React.Component<SwitchProps, SwitchState> {
   }
 
   componentDidMount(): void {
-    this.processValueProp();
+    this.onValueChange();
   }
 
   componentDidUpdate(prevProps: SwitchProps): void {
     if (this.props.value !== prevProps.value) {
-      this.processValueProp();
+      this.onValueChange();
     }
   }
 
