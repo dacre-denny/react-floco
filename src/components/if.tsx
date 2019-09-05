@@ -1,10 +1,7 @@
 import * as React from "react";
-import { PropsWithChildren } from "react";
+import { extractValue, FunctionOrValue, isType, TypedValue } from "../helpers";
 import { Else } from "./else";
 import { Loading } from "./loading";
-import { isFunction, TypedValue, extractValue, FunctionOrValue, isType } from "../helpers";
-
-type BooleanFunction = () => boolean | Promise<boolean>;
 
 type IfProps = { condition: FunctionOrValue<Promise<TypedValue>> | FunctionOrValue<TypedValue> };
 type IfState = { loading: boolean; condition?: TypedValue };
