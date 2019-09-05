@@ -1,9 +1,8 @@
 import * as React from "react";
-import { isNumber } from "../helpers";
+import { isNumber, TypedFunction } from "../helpers";
 import { isFunction } from "util";
 
-type RenderFunction<T> = (props: { key: number } & T) => React.ReactElement;
-type RepeatProps<T> = { times: number; children?: RenderFunction<any> } & T;
+type RepeatProps<T> = { times: number; children?: TypedFunction<{ key: number } & T, React.ReactElement> } & T;
 
 /**
  * Repeats rendering of inner content by number specified on times prop.
@@ -13,11 +12,8 @@ type RepeatProps<T> = { times: number; children?: RenderFunction<any> } & T;
 export class Repeat<T extends object> extends React.Component<RepeatProps<T>> {
   constructor(props: RepeatProps<T>) {
     super(props);
+    this.renderIteration = this.renderIteration.bind(this);
   }
-
-  renderChild = (_: unknown, key: number): JSX.Element | null => {
-    return this.props.children({ key, ...this.props });
-  };
 
   onProcessProps(props: RepeatProps<T>) {
     if (!isNumber(props.times)) {
@@ -39,6 +35,10 @@ export class Repeat<T extends object> extends React.Component<RepeatProps<T>> {
     this.onProcessProps(this.props);
   }
 
+  renderIteration(_: unknown, key: number): JSX.Element | null {
+    return this.props.children({ key, ...this.props });
+  }
+
   render(): JSX.Element | null {
     if (!isFunction(this.props.children)) {
       return null;
@@ -52,6 +52,6 @@ export class Repeat<T extends object> extends React.Component<RepeatProps<T>> {
       return null;
     }
 
-    return <>{Array.from({ length: this.props.times }, this.renderChild)}</>;
+    return <>{Array.from({ length: this.props.times }, this.renderIteration)}</>;
   }
 }

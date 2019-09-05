@@ -10,6 +10,23 @@ describe("Repeat", () => {
   });
 
   describe("When nothing is renderered", () => {
+    it("Should render nothing if no children render function provided", () => {
+      const warnStub = sinon.stub(console, "warn");
+      const wrapper = mount(<Repeat times={1} />);
+
+      wrapper.setProps({ times: null });
+      assert.isTrue(wrapper.isEmptyRender());
+      assert.isTrue(warnStub.called);
+
+      wrapper.setProps({ times: undefined });
+      assert.isTrue(wrapper.isEmptyRender());
+      assert.isTrue(warnStub.called);
+
+      wrapper.setProps({ times: "foo" });
+      assert.isTrue(wrapper.isEmptyRender());
+      assert.isTrue(warnStub.called);
+    });
+
     it("Should render nothing if invalid times value type provide", () => {
       const warnStub = sinon.stub(console, "warn");
       const wrapper = mount(<Repeat times={1}>{(props): React.ReactElement => <p {...props}>foo</p>}</Repeat>);

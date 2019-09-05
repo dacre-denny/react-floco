@@ -4,9 +4,13 @@ export type FunctionOrValue<T> = T | (() => T);
 
 export type TypedValue = object | string | number | boolean | null;
 
-export const isFunction = (value: unknown): boolean => typeof value === "function";
+export const isFunction = (value: unknown): boolean => {
+  return typeof value === "function";
+};
 
-export const isNumber = (value: unknown): boolean => Number.isNaN(Number.parseInt(`${value}`)) === false;
+export const isNumber = (value: unknown): boolean => {
+  return Number.isNaN(Number.parseInt(`${value}`)) === false;
+};
 
 export const extractValue = <T extends TypedValue>(value: FunctionOrValue<T>): TypedValue => {
   return isFunction(value) ? (value as Function)() : value;
