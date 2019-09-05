@@ -6,6 +6,7 @@ import { Case } from "../src/components/case";
 import { Repeat } from "../src/components/repeat";
 import { If } from "../src/components/if";
 import { Else } from "../src/components/else";
+import { Loading } from "../src/components/loading";
 import * as API from "../src/index";
 
 describe("Floco API", () => {
@@ -20,5 +21,6 @@ describe("Floco API", () => {
     assert.strictEqual(API.If, If);
     assert.strictEqual(API.Else, Else);
     assert.strictEqual(API.Repeat, Repeat);
+    assert.strictEqual(API.Loading, Loading);
   });
 });

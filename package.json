@@ -9,8 +9,10 @@
     "prepublishOnly": "npm run lint && npm run test && npm run build",
     "lint": "eslint . --ext .ts,.tsx",
     "dev": "tsc --watch",
-    "tdd": "mocha -r ts-node/register -r tests/helpers --watch-extensions ts,tsx -b -w tests/*.spec.*",
-    "test": "mocha -r ts-node/register -r tests/helpers -b tests/*.spec.*"
+    "tdd": "mocha -r ts-node/register -r test/helpers --watch-extensions ts,tsx -b -w test/*.spec.*",
+    "test": "mocha -r ts-node/register -r test/helpers -b test/*.spec.*",
+    "coverage": "nyc mocha -r ts-node/register -r test/helpers -b test/*.spec.*",
+    "report": "nyc report --reporter=text-lcov | coveralls"
   },
   "husky": {
     "hooks": {
@@ -18,11 +20,10 @@
       "pre-push": "npm run lint && npm run test"
     }
   },
-  "eslintIgnore": [
-    "dist",
-    "examples",
-    "tests"
-  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dacre-denny/react-floco.git"
+  },
   "keywords": [
     "react",
     "rendering"
@@ -30,6 +31,7 @@
   "author": "Dacre Denny",
   "license": "MIT",
   "devDependencies": {
+    "@istanbuljs/nyc-config-typescript": "^0.1.3",
     "@types/chai": "^4.2.0",
     "@types/enzyme": "^3.10.3",
     "@types/mocha": "^5.2.7",
@@ -39,6 +41,7 @@
     "@typescript-eslint/eslint-plugin": "^2.0.0",
     "@typescript-eslint/parser": "^2.0.0",
     "chai": "^4.2.0",
+    "coveralls": "^3.0.6",
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.14.0",
     "eslint": "^6.2.1",
@@ -46,9 +49,11 @@
     "husky": "^3.0.4",
     "jsdom": "^15.1.1",
     "mocha": "^6.2.0",
+    "nyc": "^14.1.1",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "sinon": "^7.4.1",
+    "source-map-support": "^0.5.13",
     "ts-node": "^8.3.0",
     "tslint": "^5.18.0",
     "typescript": "^3.5.3"

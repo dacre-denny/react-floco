@@ -6,5 +6,6 @@ export const Default = Components.Default;
 export const If = Components.If;
 export const Else = Components.Else;
 export const Repeat = Components.Repeat;
+export const Loading = Components.Loading;
 
 export default Components;
