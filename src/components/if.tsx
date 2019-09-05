@@ -8,7 +8,7 @@ type IfState = { loading: boolean; condition?: TypedValue };
 
 const isTypeLoading = isType(Loading);
 const isTypeElse = isType(Else);
-const isTypeNotElseNotLoading = (element: React.ReactNode): boolean => !isType(Else, Loading);
+const isTypeNotElseNotLoading = (element: React.ReactNode): boolean => !isType(Else, Loading)(element);
 
 /**
  * If component provides conditional rendering of inner content when condition prop:
@@ -52,6 +52,10 @@ export class If extends React.Component<IfProps, IfState> {
   }
 
   private onConditionChange(): void {
+    if (this.props.condition === undefined) {
+      console.warn(`If: condition prop must not be undefined`);
+    }
+
     const condition = extractValue(this.props.condition);
 
     if (condition instanceof Promise) {
@@ -83,16 +87,12 @@ export class If extends React.Component<IfProps, IfState> {
   render(): JSX.Element | null {
     const childrenArray = Array.isArray(this.props.children) ? this.props.children : [this.props.children];
 
-    if (this.props.condition === undefined) {
-      console.warn(`If: condition prop must not be undefined`);
-    }
-
     if (this.state.loading) {
       return <>{childrenArray.filter(isTypeLoading)}</>;
-    } else if (this.state.condition === false) {
-      return <>{childrenArray.filter(isTypeElse)}</>;
-    } else {
+    } else if (this.state.condition) {
       return <>{childrenArray.filter(isTypeNotElseNotLoading)}</>;
+    } else {
+      return <>{childrenArray.filter(isTypeElse)}</>;
     }
   }
 }

@@ -35,7 +35,7 @@ describe("The Switch component", () => {
       assert.isTrue(warnStub.calledWith(`Switch: only Case or Default children are supported`));
     });
 
-    it("Should render nothing and report warning if supported descendants are present", () => {
+    it("Should render nothing and report warning if supported components are present as descendants", () => {
       const warnStub = sinon.stub(console, "warn");
       const wrapper = mount(
         <Switch value={null}>

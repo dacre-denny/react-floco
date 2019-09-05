@@ -30,9 +30,14 @@ describe("The If component", () => {
       assert.isFalse(warnStub.called);
     });
 
-    it("Should render nothing if no Else children and condition falsey", async () => {
+    it("Should render nothing if condition false and no Else children present", async () => {
       const warnStub = sinon.stub(console, "warn");
-      const wrapper = mount(<If condition={null}>foo</If>);
+      const wrapper = mount(
+        <If condition={null}>
+          <div>foo</div>
+          <div>barr</div>
+        </If>
+      );
 
       wrapper.setProps({ condition: false });
       wrapper.update();
@@ -41,10 +46,11 @@ describe("The If component", () => {
       assert.isFalse(warnStub.called);
     });
 
-    it("Should render nothing if only Else children and condition truthy", async () => {
+    it("Should render nothing if condition true and only Else children present ", async () => {
       const warnStub = sinon.stub(console, "warn");
       const wrapper = mount(
         <If condition={null}>
+          <Else>foo</Else>
           <Else>bar</Else>
         </If>
       );
@@ -56,26 +62,15 @@ describe("The If component", () => {
       assert.isFalse(warnStub.called);
     });
 
-    it("Should render nothing if only Loading children and condition not pending", async () => {
+    it("Should render nothing if condition not pending and only Loading children present ", async () => {
       const deferredValue = deferred();
       const warnStub = sinon.stub(console, "warn");
       const wrapper = mount(
         <If condition={null}>
           <Loading>foo</Loading>
+          <Loading>bar</Loading>
         </If>
       );
-
-      wrapper.setProps({ condition: true });
-      wrapper.update();
-
-      assert.isTrue(wrapper.isEmptyRender());
-      assert.isFalse(warnStub.called);
-
-      wrapper.setProps({ condition: false });
-      wrapper.update();
-
-      assert.isTrue(wrapper.isEmptyRender());
-      assert.isFalse(warnStub.called);
 
       wrapper.setProps({ condition: deferredValue.promise });
       await deferredValue.resolve(true);
@@ -85,257 +80,140 @@ describe("The If component", () => {
       assert.isFalse(warnStub.called);
     });
   });
-  return;
-  it("should only render children when condition has value of true", async () => {
-    const warnStub = sinon.stub(console, "warn");
-    const wrapper = mount(
-      <If condition={false}>
-        <p>foo</p>
-      </If>
-    );
-    assert.isFalse(warnStub.called);
-    assert.isTrue(wrapper.isEmptyRender());
 
-    wrapper.setProps({ condition: true });
-    wrapper.update();
-    {
-      assert.isFalse(warnStub.called);
-      assert.lengthOf(wrapper.children(), 1);
-      assert.strictEqual(wrapper.childAt(0).text(), "foo");
-    }
-    wrapper.setProps({ condition: false });
-    wrapper.update();
-    {
-      assert.isFalse(warnStub.called);
-      assert.isTrue(wrapper.isEmptyRender());
-    }
-    wrapper.setProps({ condition: true });
-    wrapper.update();
-    {
-      assert.isFalse(warnStub.called);
-      assert.lengthOf(wrapper.children(), 1);
-      assert.strictEqual(wrapper.childAt(0).text(), "foo");
-    }
-  });
-
-  it("should only render children when condition as function evaluates true", async () => {
-    const warnStub = sinon.stub(console, "warn");
-    const wrapper = mount(
-      <If condition={(): boolean => false}>
-        <p>foo</p>
-      </If>
-    );
-
-    assert.isFalse(warnStub.called);
-    assert.isTrue(wrapper.isEmptyRender());
-
-    wrapper.setProps({ condition: () => true });
-    wrapper.update();
-    {
-      assert.isFalse(warnStub.called);
-      assert.lengthOf(wrapper.children(), 1);
-      assert.strictEqual(wrapper.childAt(0).text(), "foo");
-    }
-
-    wrapper.setProps({ condition: () => false });
-    wrapper.update();
-    {
-      assert.isFalse(warnStub.called);
-      assert.isTrue(wrapper.isEmptyRender());
-    }
-
-    wrapper.setProps({ condition: () => true });
-    wrapper.update();
-    {
-      assert.isFalse(warnStub.called);
-      assert.lengthOf(wrapper.children(), 1);
-      assert.strictEqual(wrapper.childAt(0).text(), "foo");
-    }
-  });
-
-  it("should only render children of Else component(s) if condition is false", async () => {
-    const warnStub = sinon.stub(console, "warn");
-    const wrapper = mount(
-      <If condition={false}>
-        <p>foo</p>
-        <Else>bar</Else>
-        <Else>was</Else>
-        <p>here</p>
-      </If>
-    );
-
-    assert.isFalse(warnStub.called);
-    assert.lengthOf(wrapper.children(), 2);
-    assert.equal(wrapper.childAt(0).text(), "bar");
-    assert.equal(wrapper.childAt(1).text(), "was");
-
-    wrapper.setProps({ condition: false });
-    wrapper.update();
-    {
-      assert.isFalse(warnStub.called);
-      assert.lengthOf(wrapper.children(), 2);
-      assert.equal(wrapper.childAt(0).text(), "bar");
-      assert.equal(wrapper.childAt(1).text(), "was");
-    }
-  });
-
-  it("should only render non-Else children if condition is true", async () => {
-    const warnStub = sinon.stub(console, "warn");
-    const wrapper = mount(
-      <If condition={true}>
-        <p>foo</p>
-        <Else>bar</Else>
-        <Else>was</Else>
-        <p>here</p>
-      </If>
-    );
-
-    assert.isFalse(warnStub.called);
-    assert.lengthOf(wrapper.children(), 2);
-    assert.equal(wrapper.childAt(0).text(), "foo");
-    assert.equal(wrapper.childAt(1).text(), "here");
-
-    wrapper.setProps({ condition: true });
-    wrapper.update();
-    {
-      assert.isFalse(warnStub.called);
-      assert.lengthOf(wrapper.children(), 2);
-      assert.equal(wrapper.childAt(0).text(), "foo");
-      assert.equal(wrapper.childAt(1).text(), "here");
-    }
-  });
-
-  it("should not affect rendering content in Else components that are not direct children", async () => {
-    const warnStub = sinon.stub(console, "warn");
-    const wrapper = mount(
-      <If condition={true}>
-        <div>
+  describe("When Else is rendered", () => {
+    it("Should render Else children if condition is false", async () => {
+      const warnStub = sinon.stub(console, "warn");
+      const wrapper = mount(
+        <If condition={null}>
           <p>foo</p>
-          <Else>
-            <p>bar</p>
-            <Else>was</Else>
-          </Else>
+          <Else>bar</Else>
+          <Else>was</Else>
           <p>here</p>
-        </div>
-      </If>
-    );
+        </If>
+      );
 
-    assert.isFalse(warnStub.called);
-    assert.strictEqual(wrapper.text(), "foobarwashere");
+      wrapper.setProps({ condition: false });
+      wrapper.update();
+
+      assert.isTrue(wrapper.containsAllMatchingElements([<Else>bar</Else>, <Else>was</Else>]));
+      assert.equal(wrapper.children().length, 2);
+      assert.isFalse(warnStub.called);
+    });
+
+    it("Should render Else children when async condition resolved to false", async () => {
+      const warnStub = sinon.stub(console, "warn");
+      const asyncDeferred = deferred<boolean>();
+      const wrapper = mount(
+        <If condition={() => asyncDeferred.promise}>
+          <Loading>loading</Loading>
+          <Else>bar</Else>
+          <p>foo</p>
+        </If>
+      );
+
+      await asyncDeferred.resolve(false);
+      wrapper.update();
+
+      assert.isTrue(wrapper.containsAllMatchingElements([<Else>bar</Else>]));
+      assert.lengthOf(wrapper.children(), 1);
+      assert.isFalse(warnStub.called);
+    });
+
+    it("Should render Else children when async condition rejected", async () => {
+      const warnStub = sinon.stub(console, "warn");
+      const asyncDeferred = deferred<boolean>();
+      const wrapper = mount(
+        <If condition={() => asyncDeferred.promise}>
+          <Loading>loading</Loading>
+          <Else>bar</Else>
+          <p>foo</p>
+        </If>
+      );
+
+      await asyncDeferred.reject(new Error());
+      wrapper.update();
+
+      assert.isTrue(wrapper.containsAllMatchingElements([<Else>bar</Else>]));
+      assert.lengthOf(wrapper.children(), 1);
+      assert.isFalse(warnStub.called);
+    });
   });
 
-  it("should render children when async condition resolved to true", async () => {
-    const warnStub = sinon.stub(console, "warn");
-    const asyncDeferred = deferred<boolean>();
+  describe("When Loading is rendered", () => {
+    it("Should render Loading children while async condition pending", async () => {
+      const deferredValue = deferred();
+      const warnStub = sinon.stub(console, "warn");
+      const wrapper = mount(
+        <If condition={null}>
+          <Loading>foo</Loading>
+          <Loading>bar</Loading>
+        </If>
+      );
 
-    const wrapper = mount(
-      <If condition={() => asyncDeferred.promise}>
-        <Loading>loading</Loading>
-        <p>foo</p>
-      </If>
-    );
+      wrapper.setProps({ condition: deferredValue.promiseFunction });
+      wrapper.update();
 
-    assert.lengthOf(wrapper.children(), 1);
-    assert.strictEqual(wrapper.childAt(0).text(), "loading");
-
-    await asyncDeferred.resolve(true);
-
-    wrapper.update();
-
-    assert.isFalse(warnStub.called);
-    assert.lengthOf(wrapper.children(), 1);
-    assert.strictEqual(wrapper.childAt(0).text(), "foo");
+      assert.isTrue(wrapper.containsAllMatchingElements([<Loading>foo</Loading>, <Loading>bar</Loading>]));
+      assert.equal(wrapper.children().length, 2);
+      assert.isFalse(warnStub.called);
+    });
   });
 
-  it("should render children when async condition resolved to false", async () => {
-    const warnStub = sinon.stub(console, "warn");
-    const asyncDeferred = deferred<boolean>();
+  describe("When non Else and non Loading children are rendered", () => {
+    it("Should render non-Else children when condition has value of true", async () => {
+      const warnStub = sinon.stub(console, "warn");
+      const wrapper = mount(
+        <If condition={null}>
+          <p>foo</p>
+          <div>bar</div>
+        </If>
+      );
 
-    const wrapper = mount(
-      <If condition={() => asyncDeferred.promise}>
-        <Loading>loading</Loading>
-        <Else>bar</Else>
-        <p>foo</p>
-      </If>
-    );
+      wrapper.setProps({ condition: true });
+      wrapper.update();
 
-    assert.lengthOf(wrapper.children(), 1);
-    assert.strictEqual(wrapper.childAt(0).text(), "loading");
+      assert.isTrue(wrapper.containsAllMatchingElements([<p>foo</p>, <div>bar</div>]));
+      assert.lengthOf(wrapper.children(), 2);
+      assert.isFalse(warnStub.called);
+    });
 
-    await asyncDeferred.resolve(false);
-    wrapper.update();
+    it("Should render non-Else children when condition has callback value of true", async () => {
+      const warnStub = sinon.stub(console, "warn");
+      const wrapper = mount(
+        <If condition={null}>
+          <p>foo</p>
+          <div>bar</div>
+        </If>
+      );
 
-    assert.isFalse(warnStub.called);
-    assert.lengthOf(wrapper.children(), 1);
-    assert.strictEqual(wrapper.childAt(0).text(), "bar");
-  });
+      wrapper.setProps({ condition: () => true });
+      wrapper.update();
 
-  it("should render different result when async condition changed and resolved to true", async () => {
-    const warnStub = sinon.stub(console, "warn");
-    const asyncDeferredTrue = deferred<boolean>();
-    const asyncDeferredFalse = deferred<boolean>();
+      assert.isTrue(wrapper.containsAllMatchingElements([<p>foo</p>, <div>bar</div>]));
+      assert.lengthOf(wrapper.children(), 2);
+      assert.isFalse(warnStub.called);
+    });
 
-    const wrapper = mount(
-      <If condition={() => asyncDeferredTrue.promise}>
-        <Loading>loading</Loading>
-        <Else>bar</Else>
-        <p>foo</p>
-      </If>
-    );
+    it("Should render non-Else children when async condition resolves true", async () => {
+      const deferredValue = deferred();
+      const warnStub = sinon.stub(console, "warn");
+      const wrapper = mount(
+        <If condition={null}>
+          <p>foo</p>
+          <div>bar</div>
+        </If>
+      );
 
-    assert.lengthOf(wrapper.children(), 1);
-    assert.strictEqual(wrapper.childAt(0).text(), "loading");
+      wrapper.setProps({ condition: deferredValue.promiseFunction });
+      wrapper.update();
 
-    await asyncDeferredTrue.resolve(true);
-    wrapper.update();
+      await deferredValue.resolve(true);
+      wrapper.update();
 
-    assert.isFalse(warnStub.called);
-    assert.lengthOf(wrapper.children(), 1);
-    assert.strictEqual(wrapper.childAt(0).text(), "foo");
-
-    wrapper.setProps({ condition: () => asyncDeferredFalse.promise });
-    wrapper.update();
-
-    await tick();
-
-    assert.lengthOf(wrapper.children(), 1);
-    assert.strictEqual(wrapper.childAt(0).text(), "loading");
-
-    await asyncDeferredFalse.resolve(false);
-    wrapper.update();
-
-    assert.isFalse(warnStub.called);
-    assert.lengthOf(wrapper.children(), 1);
-    assert.strictEqual(wrapper.childAt(0).text(), "bar");
-  });
-
-  it("should render different result when async condition changed to value true", async () => {
-    const warnStub = sinon.stub(console, "warn");
-    const asyncDeferred = deferred<boolean>();
-
-    const wrapper = mount(
-      <If condition={() => asyncDeferred.promise}>
-        <Loading>loading</Loading>
-        <Else>bar</Else>
-        <p>foo</p>
-      </If>
-    );
-
-    assert.lengthOf(wrapper.children(), 1);
-    assert.strictEqual(wrapper.childAt(0).text(), "loading");
-
-    await asyncDeferred.resolve(true);
-    wrapper.update();
-
-    assert.isFalse(warnStub.called);
-    assert.lengthOf(wrapper.children(), 1);
-    assert.strictEqual(wrapper.childAt(0).text(), "foo");
-
-    wrapper.setProps({ condition: false });
-    wrapper.update();
-
-    assert.isFalse(warnStub.called);
-    assert.lengthOf(wrapper.children(), 1);
-    assert.strictEqual(wrapper.childAt(0).text(), "bar");
+      assert.isTrue(wrapper.containsAllMatchingElements([<p>foo</p>, <div>bar</div>]));
+      assert.lengthOf(wrapper.children(), 2);
+      assert.isFalse(warnStub.called);
+    });
   });
 });

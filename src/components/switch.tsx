@@ -70,6 +70,10 @@ export class Switch extends React.Component<SwitchProps, SwitchState> {
   }
 
   private onValueChange(): void {
+    if (this.props.value === undefined) {
+      console.warn(`Switch: value prop must not be undefined`);
+    }
+
     const value = extractValue(this.props.value);
 
     if (value instanceof Promise) {
@@ -104,10 +108,6 @@ export class Switch extends React.Component<SwitchProps, SwitchState> {
     }
 
     const childrenArray = Array.isArray(this.props.children) ? this.props.children : [this.props.children];
-    if (this.props.value === undefined) {
-      console.warn(`Switch: value prop must not be undefined`);
-    }
-
     if (!childrenArray.every(isTypeSupported)) {
       console.warn(`Switch: only Case or Default children are supported`);
     }
