@@ -9,6 +9,41 @@ describe("Repeat", () => {
     sinon.restore();
   });
 
+  describe("When nothing is renderered", () => {
+    it("Should render nothing if invalid times value type provide", () => {
+      const warnStub = sinon.stub(console, "warn");
+      const wrapper = mount(<Repeat times={1}>{(props): React.ReactElement => <p {...props}>foo</p>}</Repeat>);
+
+      wrapper.setProps({ times: null });
+      assert.isTrue(wrapper.isEmptyRender());
+      assert.isTrue(warnStub.called);
+
+      wrapper.setProps({ times: undefined });
+      assert.isTrue(wrapper.isEmptyRender());
+      assert.isTrue(warnStub.called);
+
+      wrapper.setProps({ times: "foo" });
+      assert.isTrue(wrapper.isEmptyRender());
+      assert.isTrue(warnStub.called);
+    });
+
+    it("should render no children for zero times prop", () => {
+      const warnStub = sinon.stub(console, "warn");
+      const wrapper = mount(<Repeat times={0}>{(props): React.ReactElement => <p {...props}>foo</p>}</Repeat>);
+
+      assert.isTrue(wrapper.isEmptyRender());
+      assert.isFalse(warnStub.called);
+    });
+
+    it("should render no children for negative times prop", () => {
+      const warnStub = sinon.stub(console, "warn");
+      const wrapper = mount(<Repeat times={-15}>{(props): React.ReactElement => <p {...props}>foo</p>}</Repeat>);
+
+      assert.isTrue(wrapper.isEmptyRender());
+      assert.isTrue(warnStub.called);
+    });
+  });
+
   it("should render number of children matching times prop", () => {
     const warnStub = sinon.stub(console, "warn");
     const wrapper = mount(<Repeat times={7}>{(props): React.ReactElement => <p {...props}>foo</p>}</Repeat>);
@@ -20,35 +55,6 @@ describe("Repeat", () => {
       assert.strictEqual(child.text(), "foo");
       assert.strictEqual(child.type(), "p");
     });
-  });
-
-  it("should render no children for null or undefined times prop", () => {
-    const warnStub = sinon.stub(console, "warn");
-    const wrapper = mount(<Repeat times={1}>{(props): React.ReactElement => <p {...props}>foo</p>}</Repeat>);
-
-    wrapper.setProps({ times: null });
-    assert.isTrue(wrapper.isEmptyRender());
-    assert.isTrue(warnStub.called);
-
-    wrapper.setProps({ times: undefined });
-    assert.isTrue(wrapper.isEmptyRender());
-    assert.isTrue(warnStub.called);
-  });
-
-  it("should render no children for zero times prop", () => {
-    const warnStub = sinon.stub(console, "warn");
-    const wrapper = mount(<Repeat times={0}>{(props): React.ReactElement => <p {...props}>foo</p>}</Repeat>);
-
-    assert.isTrue(wrapper.isEmptyRender());
-    assert.isFalse(warnStub.called);
-  });
-
-  it("should render no children for negative times prop", () => {
-    const warnStub = sinon.stub(console, "warn");
-    const wrapper = mount(<Repeat times={-15}>{(props): React.ReactElement => <p {...props}>foo</p>}</Repeat>);
-
-    assert.isTrue(wrapper.isEmptyRender());
-    assert.isTrue(warnStub.called);
   });
 
   it("should pass props through to rendered children", () => {
