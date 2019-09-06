@@ -98,75 +98,93 @@ function ItemsOrPlaceholders (props) {
 
 The Switch component mimics the behavior of a regular [switch statement](https://en.wikipedia.org/wiki/Switch_statement) during rendering. The Switch will render any Case child that matches the current `value` prop of the Switch. If no match occurs and one or more Default component are present, then those will be rendered:
 
+```
     <Switch value={age}>
         <Case for={1}>You're one</Case>
         <Case for={2}>You're two</Case>
         <Case for={3}>You're three</Case>
         <Default>You're old!</Default>
     </Switch>
+```
 
 Multiple Case matches are possible:
 
+```
     <Switch value={role}>
         <Case for={'admin'}>As an administrator you have total control</Case>
         <Case for={'user'}>Contact your system administrator if you need help</Case>
         <Case for={'admin'}><a href="/admin/area">Admin area</button></Case>
         <Default>Please <a href="/login">login</a></Default>
     </Switch>
+```
 
 Matches across mixed types are possible:
 
+```
     <Switch value={data}>
         <Case for={1}>Data is a number</Case>
         <Case for={true}>Data is a boolean</Case>
     </Switch>
+```
 
 The value prop can be an actual value or a function. Asynchronous functions are also supported and can be coupled with a Loading component:
 
+```
     <Switch value={() => fetchUserRole()}>
         <Loading>Determining your privileges</Loading>
         <Case for={'admin'}>You have full privileges</Case>
         <Case for={'user'}>You have limited privileges</Case>
     </Switch>
+```
 
 ### Conditional rendering with If and Else
 
 The If component mimics the behavior of a [conditional statement](<https://en.wikipedia.org/wiki/Control_flow#If-then-(else)_statements>) to provide declarative conditional rendering. The If component will render when the `condition` prop evaluates to `true`. If the condition evaluates to `false` and an Else component is present, then that will be rendered instead:
 
+```
     <If condition={isExpert}>
         <p>You are at the top of your game</p>
         <Else><a href="/up-skill">Click here to up skill</a></Else>
     </Switch>
+```
 
 Multiple Else components are possible:
 
+```
     <If condition={didSucceed}>
         <Else>You failed</Else>
         <b>You passed</b>
         <Else><a href="/retry>Try again</a></Else>
     </If>
+```
 
 The `condition` prop can be a boolean value or a function that returns a boolean result. Asynchronous functions are supported and can be coupled with a Loading component:
 
+```
     <If condition={() => fetchIsLoggedIn()}>
         You're logged in!
         <Loading>Please wait...</Loading>
         <Else>You are not logged in :(</Else>
     </If>
+```
 
 ### Rendering multiple components with Repeat
 
 The Repeat component mimics the behavior of a [count controlled loop](https://en.wikipedia.org/wiki/Control_flow#Count-controlled_loops), providing a declarative means of rendering a component multiple times. The Repeat component renders children via a callback function through which a `key` for the current iteration is provided:
 
+```
     <Repeat times={5}>
         ({ key }) => <p key={key}>I render five times</p>
     </Repeat>
+```
 
 The Repeat component also allows transmission of additional props to the callback function:
 
+```
     <Repeat times={10} greet={"Bob"} >
         ({ key, greet }) => <p key={key}>Hi { greet}! I render ten times</p>
     </Repeat>
+```
 
 ## API
 

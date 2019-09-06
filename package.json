@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc --build --clean && tsc",
     "prepublishOnly": "npm run lint && npm run test && npm run build",
-    "lint": "eslint . --ext .ts,.tsx",
+    "lint": "eslint . --ext .ts,.tsx && remark .",
     "dev": "tsc --watch",
     "tdd": "mocha -r ts-node/register -r test/helpers --watch-extensions ts,tsx -b -w test/*.spec.*",
     "test": "mocha -r ts-node/register -r test/helpers -b test/*.spec.*",
@@ -53,6 +53,8 @@
     "prettier": "^1.18.2",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
+    "remark-cli": "^7.0.0",
+    "remark-preset-lint-recommended": "^3.0.3",
     "sinon": "^7.4.1",
     "source-map-support": "^0.5.13",
     "ts-node": "^8.3.0",
