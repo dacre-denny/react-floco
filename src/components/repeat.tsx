@@ -2,12 +2,12 @@ import * as React from "react";
 import { TypedFunction, isFunction } from "../helpers";
 
 type RepeatProps<T> = {
-  times: number;
-  children?: TypedFunction<{ key: number } & T, React.ReactElement>;
+    times: number;
+    children?: TypedFunction<{ key: number } & T, React.ReactElement>;
 } & T;
 
 const isNumber = (value: unknown): boolean => {
-  return Number.isNaN(Number.parseInt(`${value}`)) === false;
+    return Number.isNaN(Number.parseInt(`${value}`)) === false;
 };
 
 /**
@@ -16,50 +16,50 @@ const isNumber = (value: unknown): boolean => {
  * @param props
  */
 export class Repeat<T extends object> extends React.Component<RepeatProps<T>> {
-  constructor(props: RepeatProps<T>) {
-    super(props);
-    this.renderIteration = this.renderIteration.bind(this);
-  }
-
-  public componentDidMount(): void {
-    this.onProcessProps(this.props);
-  }
-
-  public componentDidUpdate(): void {
-    this.onProcessProps(this.props);
-  }
-
-  public render(): JSX.Element | null {
-    if (!isFunction(this.props.children)) {
-      return null;
+    constructor(props: RepeatProps<T>) {
+        super(props);
+        this.renderIteration = this.renderIteration.bind(this);
     }
 
-    if (!isNumber(this.props.times)) {
-      return null;
+    public componentDidMount(): void {
+        this.onProcessProps(this.props);
     }
 
-    if (this.props.times < 0) {
-      return null;
+    public componentDidUpdate(): void {
+        this.onProcessProps(this.props);
     }
 
-    return (
-      <>{Array.from({ length: this.props.times }, this.renderIteration)}</>
-    );
-  }
+    public render(): JSX.Element | null {
+        if (!isFunction(this.props.children)) {
+            return null;
+        }
 
-  private renderIteration(_: unknown, key: number): JSX.Element | null {
-    return this.props.children({ key, ...this.props });
-  }
+        if (!isNumber(this.props.times)) {
+            return null;
+        }
 
-  private onProcessProps(props: RepeatProps<T>): void {
-    if (!isNumber(props.times)) {
-      console.warn(`Repeat: times prop must be valid number`);
-    } else if (props.times < 0) {
-      console.warn(`Repeat: times prop must non-negative`);
+        if (this.props.times < 0) {
+            return null;
+        }
+
+        return (
+            <>{Array.from({ length: this.props.times }, this.renderIteration)}</>
+        );
     }
 
-    if (!isFunction(props.children)) {
-      console.warn(`Repeat: children prop must be valid function`);
+    private renderIteration(_: unknown, key: number): JSX.Element | null {
+        return this.props.children({ key, ...this.props });
     }
-  }
+
+    private onProcessProps(props: RepeatProps<T>): void {
+        if (!isNumber(props.times)) {
+            console.warn(`Repeat: times prop must be valid number`);
+        } else if (props.times < 0) {
+            console.warn(`Repeat: times prop must non-negative`);
+        }
+
+        if (!isFunction(props.children)) {
+            console.warn(`Repeat: children prop must be valid function`);
+        }
+    }
 }

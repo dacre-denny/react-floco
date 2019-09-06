@@ -1,22 +1,29 @@
 {
-  "parser": "@typescript-eslint/parser",
-  "extends": ["prettier", "eslint:recommended", "plugin:react/recommended", "plugin:@typescript-eslint/eslint-recommended", "plugin:@typescript-eslint/recommended"],
-  "plugins": ["@typescript-eslint", "prettier"],
-  "env": {
-    "browser": true,
-    "node": true
-  },
-  "parserOptions": {
-    "project": "./tsconfig.json"
-  },
-  "rules": {
-    "react/jsx-uses-react": 1,
-    "react/prop-types": 0,
-    "prettier/prettier": "error"
-  },
-  "settings": {
-    "react": {
-      "version": "latest"
+    "parser": "@typescript-eslint/parser",
+    "extends": [
+        "plugin:react/recommended"
+    ],
+    "plugins": [
+        "@typescript-eslint"
+    ],
+    "env": {
+        "browser": true,
+        "node": true
+    },
+    "parserOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "modules": true
+        },
+        "project": "./tsconfig.json"
+    },
+    "rules": {
+        "react/prop-types": 0
+    },
+    "settings": {
+        "react": {
+            "version": "latest"
+        }
     }
-  }
 }

@@ -10,7 +10,7 @@ export type TypedValue = object | string | number | boolean | null;
  * @param value
  */
 export const isFunction = (value: unknown): boolean => {
-  return typeof value === "function";
+    return typeof value === "function";
 };
 
 /**
@@ -20,9 +20,9 @@ export const isFunction = (value: unknown): boolean => {
  * @param value
  */
 export const extractValue = <T extends TypedValue>(
-  value: FunctionOrValue<T>
+    value: FunctionOrValue<T>
 ): TypedValue => {
-  return isFunction(value) ? (value as Function)() : value;
+    return isFunction(value) ? (value as Function)() : value;
 };
 
 /**
@@ -32,19 +32,19 @@ export const extractValue = <T extends TypedValue>(
  * @param types
  */
 export const isType = (...types: React.JSXElementConstructor<unknown>[]) => (
-  node: React.ReactNode
+    node: React.ReactNode
 ): boolean => {
-  const element = node as React.ReactElement;
+    const element = node as React.ReactElement;
 
-  if (!element) {
-    return false;
-  }
-
-  for (const type of types) {
-    if (type === element.type) {
-      return true;
+    if (!element) {
+        return false;
     }
-  }
 
-  return false;
+    for (const type of types) {
+        if (type === element.type) {
+            return true;
+        }
+    }
+
+    return false;
 };
