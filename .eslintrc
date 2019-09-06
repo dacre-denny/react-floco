@@ -1,11 +1,7 @@
 {
     "parser": "@typescript-eslint/parser",
-    "extends": [
-        "plugin:react/recommended"
-    ],
-    "plugins": [
-        "@typescript-eslint"
-    ],
+    "extends": [],
+    "plugins": [],
     "env": {
         "browser": true,
         "node": true
