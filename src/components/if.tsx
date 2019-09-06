@@ -16,8 +16,7 @@ type IfState = { loading: boolean; condition?: TypedValue };
 
 const isTypeLoading = isType(Loading);
 const isTypeElse = isType(Else);
-const isTypeNotElseNotLoading = (element: React.ReactNode): boolean =>
-    !isType(Else, Loading)(element);
+const isTypeNotElseNotLoading = (element: React.ReactNode): boolean => !isType(Else, Loading)(element);
 
 /**
  * If component provides conditional rendering of inner content when condition prop:

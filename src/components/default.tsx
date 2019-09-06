@@ -6,7 +6,7 @@ import * as React from "react";
  * @param props
  */
 export class Default extends React.Component {
-    render(): JSX.Element | null {
+    public render(): JSX.Element | null {
         return <>{this.props.children}</>;
     }
 }
