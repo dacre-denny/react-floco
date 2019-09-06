@@ -1,17 +1,17 @@
 import * as React from "react";
 import {
-    extractValue,
-    FunctionOrValue,
-    isType,
-    TypedValue,
-    TypedFunction
+  extractValue,
+  FunctionOrValue,
+  isType,
+  TypedValue,
+  TypedFunction
 } from "../helpers";
 import { Case, CaseProps } from "./case";
 import { Default } from "./default";
 import { Loading } from "./loading";
 
 type SwitchProps = {
-    value: FunctionOrValue<Promise<TypedValue>> | FunctionOrValue<TypedValue>;
+  value: FunctionOrValue<Promise<TypedValue>> | FunctionOrValue<TypedValue>;
 };
 type SwitchState = { loading: boolean; value?: TypedValue };
 
@@ -25,15 +25,15 @@ const isTypeSupported = isType(Default, Case, Loading);
  * @param value
  */
 const isTypeCaseMatch = (value?: TypedValue) => (
-    node: React.ReactNode
+  node: React.ReactNode
 ): boolean => {
-    if (value !== undefined && isTypeCase(node)) {
-        const element = node as React.ReactElement<CaseProps>;
+  if (value !== undefined && isTypeCase(node)) {
+    const element = node as React.ReactElement<CaseProps>;
 
-        return element.props.for === value;
-    }
+    return element.props.for === value;
+  }
 
-    return false;
+  return false;
 };
 
 /**
@@ -49,102 +49,102 @@ const isTypeCaseMatch = (value?: TypedValue) => (
  * @param props
  */
 export class Switch extends React.Component<SwitchProps, SwitchState> {
-    pendingPromise?: Promise<TypedValue>;
+  pendingPromise?: Promise<TypedValue>;
 
-    constructor(props: SwitchProps) {
-        super(props);
+  constructor(props: SwitchProps) {
+    super(props);
 
-        this.pendingPromise = undefined;
-        this.state = {
-            loading: false,
-            value: undefined
-        };
+    this.pendingPromise = undefined;
+    this.state = {
+      loading: false,
+      value: undefined
+    };
+  }
+
+  public componentDidMount(): void {
+    this.onValueChange();
+  }
+
+  public componentDidUpdate(prevProps: SwitchProps): void {
+    if (this.props.value !== prevProps.value) {
+      this.onValueChange();
+    }
+  }
+
+  public render(): JSX.Element | null {
+    if (!this.props.children) {
+      return null;
     }
 
-    public componentDidMount(): void {
-        this.onValueChange();
+    const childrenArray = Array.isArray(this.props.children)
+      ? this.props.children
+      : [this.props.children];
+    if (!childrenArray.every(isTypeSupported)) {
+      console.warn(`Switch: only Case or Default children are supported`);
     }
 
-    public componentDidUpdate(prevProps: SwitchProps): void {
-        if (this.props.value !== prevProps.value) {
-            this.onValueChange();
-        }
+    if (this.state.loading) {
+      return <>{childrenArray.filter(isType(Loading))}</>;
     }
 
-    public render(): JSX.Element | null {
-        if (!this.props.children) {
-            return null;
-        }
-
-        const childrenArray = Array.isArray(this.props.children)
-            ? this.props.children
-            : [this.props.children];
-        if (!childrenArray.every(isTypeSupported)) {
-            console.warn(`Switch: only Case or Default children are supported`);
-        }
-
-        if (this.state.loading) {
-            return <>{childrenArray.filter(isType(Loading))}</>;
-        }
-
-        const cases = childrenArray.filter(isTypeCaseMatch(this.state.value));
-        if (cases.length) {
-            return <>{cases}</>;
-        }
-
-        const defaults = childrenArray.filter(isType(Default));
-        if (defaults.length) {
-            return <>{defaults}</>;
-        }
-
-        return null;
+    const cases = childrenArray.filter(isTypeCaseMatch(this.state.value));
+    if (cases.length) {
+      return <>{cases}</>;
     }
 
-    private onValueResolved(
-        promise: Promise<TypedValue>
-    ): TypedFunction<Promise<TypedValue>, unknown> {
-        return (value: TypedValue): void => {
-            if (this.pendingPromise === promise) {
-                // If value prop reference intact, update state from async completion
-                this.setState({ value, loading: false });
-            }
-        };
+    const defaults = childrenArray.filter(isType(Default));
+    if (defaults.length) {
+      return <>{defaults}</>;
     }
 
-    private onValueRejected(
-        promise: Promise<TypedValue>
-    ): TypedFunction<Promise<TypedValue>, unknown> {
-        return (): void => {
-            if (this.pendingPromise === promise) {
-                // If value prop reference intact and error occurred, update error state
-                this.setState({ value: undefined, loading: false });
-            }
-        };
+    return null;
+  }
+
+  private onValueResolved(
+    promise: Promise<TypedValue>
+  ): TypedFunction<Promise<TypedValue>, unknown> {
+    return (value: TypedValue): void => {
+      if (this.pendingPromise === promise) {
+        // If value prop reference intact, update state from async completion
+        this.setState({ value, loading: false });
+      }
+    };
+  }
+
+  private onValueRejected(
+    promise: Promise<TypedValue>
+  ): TypedFunction<Promise<TypedValue>, unknown> {
+    return (): void => {
+      if (this.pendingPromise === promise) {
+        // If value prop reference intact and error occurred, update error state
+        this.setState({ value: undefined, loading: false });
+      }
+    };
+  }
+
+  private onValueChange(): void {
+    if (this.props.value === undefined) {
+      console.warn(`Switch: value prop must not be undefined`);
     }
 
-    private onValueChange(): void {
-        if (this.props.value === undefined) {
-            console.warn(`Switch: value prop must not be undefined`);
-        }
+    const value = extractValue(this.props.value);
 
-        const value = extractValue(this.props.value);
+    if (value instanceof Promise) {
+      const promise = value as Promise<TypedValue>;
 
-        if (value instanceof Promise) {
-            const promise = value as Promise<TypedValue>;
+      // Update pending promise as current promise instance
+      this.pendingPromise = promise;
+      this.setState({ loading: true });
 
-            // Update pending promise as current promise instance
-            this.pendingPromise = promise;
-            this.setState({ loading: true });
-
-            promise.then(
-                this.onValueResolved(promise),
-                this.onValueRejected(promise)
-            );
-        } else {
-            // If value is non-promise, clear the pending promise flag blocking and previously
-            // pending promise from updating state
-            this.pendingPromise = undefined;
-            this.setState({ value, loading: false });
-        }
+      promise.then(
+        this.onValueResolved(promise),
+        this.onValueRejected(promise)
+      );
+    } else {
+      // If value is non-promise, clear the pending promise flag blocking and previously
+      // pending promise from updating state
+      this.pendingPromise = undefined;
+      this.setState({ value, loading: false });
     }
+  }
 }

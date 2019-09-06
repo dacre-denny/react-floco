@@ -9,7 +9,7 @@ export type CaseProps = { for: TypedValue };
  * @param props
  */
 export class Case extends React.Component<CaseProps> {
-    public render(): JSX.Element | null {
-        return <>{this.props.children}</>;
-    }
+  public render(): JSX.Element | null {
+    return <>{this.props.children}</>;
+  }
 }

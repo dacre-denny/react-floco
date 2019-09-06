@@ -7,7 +7,7 @@ import * as React from "react";
  * @param props
  */
 export class Else extends React.Component {
-    public render(): JSX.Element | null {
-        return <>{this.props.children}</>;
-    }
+  public render(): JSX.Element | null {
+    return <>{this.props.children}</>;
+  }
 }
