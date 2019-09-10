@@ -172,8 +172,8 @@ describe("The Switch component", () => {
 
       assert.isTrue(
         wrapper.containsAllMatchingElements([
-          <Default key={0}>foo</Default>,
-          <Default key={1}>bar</Default>
+          <Default>foo</Default>,
+          <Default>bar</Default>
         ])
       );
       assert.equal(wrapper.children().length, 2);
@@ -195,8 +195,8 @@ describe("The Switch component", () => {
 
       assert.isTrue(
         wrapper.containsAllMatchingElements([
-          <Default key={0}>foo</Default>,
-          <Default key={1}>bar</Default>
+          <Default>foo</Default>,
+          <Default>bar</Default>
         ])
       );
       assert.equal(wrapper.children().length, 2);
@@ -218,8 +218,8 @@ describe("The Switch component", () => {
 
       assert.isTrue(
         wrapper.containsAllMatchingElements([
-          <Default key={0}>foo</Default>,
-          <Default key={1}>bar</Default>
+          <Default>foo</Default>,
+          <Default>bar</Default>
         ])
       );
       assert.equal(wrapper.children().length, 2);
@@ -239,8 +239,8 @@ describe("The Switch component", () => {
 
       assert.isTrue(
         wrapper.containsAllMatchingElements([
-          <Default key={0}>foo</Default>,
-          <Default key={1}>bar</Default>
+          <Default>foo</Default>,
+          <Default>bar</Default>
         ])
       );
       assert.equal(wrapper.children().length, 2);
@@ -263,8 +263,8 @@ describe("The Switch component", () => {
 
       assert.isTrue(
         wrapper.containsAllMatchingElements([
-          <Default key={0}>foo</Default>,
-          <Default key={1}>bar</Default>
+          <Default>foo</Default>,
+          <Default>bar</Default>
         ])
       );
       assert.equal(wrapper.children().length, 2);
@@ -288,12 +288,8 @@ describe("The Switch component", () => {
 
       assert.isTrue(
         wrapper.containsAllMatchingElements([
-          <Case for={1} key={0}>
-            case 1
-          </Case>,
-          <Case for={1} key={1}>
-            bar
-          </Case>
+          <Case for={1}>case 1</Case>,
+          <Case for={1}>bar</Case>
         ])
       );
       assert.equal(wrapper.children().length, 2);
@@ -317,12 +313,8 @@ describe("The Switch component", () => {
 
       assert.isTrue(
         wrapper.containsAllMatchingElements([
-          <Case for={1} key={0}>
-            case 1
-          </Case>,
-          <Case for={1} key={1}>
-            bar
-          </Case>
+          <Case for={1}>case 1</Case>,
+          <Case for={1}>bar</Case>
         ])
       );
       assert.equal(wrapper.children().length, 2);
@@ -344,11 +336,7 @@ describe("The Switch component", () => {
       wrapper.update();
 
       assert.isTrue(
-        wrapper.containsAllMatchingElements([
-          <Case for={2} key={0}>
-            case 2
-          </Case>
-        ])
+        wrapper.containsAllMatchingElements([<Case for={2}>case 2</Case>])
       );
       assert.equal(wrapper.children().length, 1);
       assert.isFalse(warnStub.called);
@@ -369,11 +357,7 @@ describe("The Switch component", () => {
       wrapper.update();
 
       assert.isTrue(
-        wrapper.containsAllMatchingElements([
-          <Case for={null} key={0}>
-            case null
-          </Case>
-        ])
+        wrapper.containsAllMatchingElements([<Case for={null}>case null</Case>])
       );
       assert.equal(wrapper.children().length, 1);
 
@@ -382,9 +366,7 @@ describe("The Switch component", () => {
 
       assert.isTrue(
         wrapper.containsAllMatchingElements([
-          <Case for={"string"} key={0}>
-            case string
-          </Case>
+          <Case for={"string"}>case string</Case>
         ])
       );
       assert.equal(wrapper.children().length, 1);
@@ -393,11 +375,7 @@ describe("The Switch component", () => {
       wrapper.update();
 
       assert.isTrue(
-        wrapper.containsAllMatchingElements([
-          <Case for={true} key={0}>
-            case true
-          </Case>
-        ])
+        wrapper.containsAllMatchingElements([<Case for={true}>case true</Case>])
       );
       assert.equal(wrapper.children().length, 1);
 
@@ -405,11 +383,7 @@ describe("The Switch component", () => {
       wrapper.update();
 
       assert.isTrue(
-        wrapper.containsAllMatchingElements([
-          <Case for={1} key={0}>
-            case 1
-          </Case>
-        ])
+        wrapper.containsAllMatchingElements([<Case for={1}>case 1</Case>])
       );
       assert.equal(wrapper.children().length, 1);
 
@@ -505,8 +479,8 @@ describe("The Switch component", () => {
 
       assert.isTrue(
         wrapper.containsAllMatchingElements([
-          <Loading key={0}>foo</Loading>,
-          <Loading key={1}>bar</Loading>
+          <Loading>foo</Loading>,
+          <Loading>bar</Loading>
         ])
       );
       assert.equal(wrapper.children().length, 2);

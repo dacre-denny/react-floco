@@ -49,7 +49,7 @@ const isTypeCaseMatch = (value?: TypedValue) => (
  * @param props
  */
 export class Switch extends React.Component<SwitchProps, SwitchState> {
-  pendingPromise?: Promise<TypedValue>;
+  private pendingPromise?: Promise<TypedValue>;
 
   constructor(props: SwitchProps) {
     super(props);
