@@ -12,6 +12,7 @@
   "rules": {
     "react/prop-types": 0,
     "indent": 0,
+    "react/jsx-key": 0,
     "no-magic-numbers": ["error", { "ignore": [0, 1, 2, 4, 5, 7] }],
     "comma-dangle": ["error", "never"],
     "@typescript-eslint/indent": ["error", 2],
@@ -21,7 +22,6 @@
     {
       "files": ["./test/**/*.*"],
       "rules": {
-        "react/jsx-key": 0,
         "max-classes-per-file": "off"
       }
     }
