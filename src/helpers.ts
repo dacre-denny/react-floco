@@ -29,18 +29,20 @@ export const extractValue = <T extends TypedValue>(value: FunctionOrValue<T>): T
  *
  * @param types
  */
-export const isType = (...types: React.JSXElementConstructor<unknown>[]) => (node: React.ReactNode): boolean => {
-  const element = node as React.ReactElement;
+export const isType = (...types: React.JSXElementConstructor<unknown>[]): TypedFunction<React.ReactNode, boolean> => {
+  return (node: React.ReactNode): boolean => {
+    const element = node as React.ReactElement;
 
-  if (!element) {
-    return false;
-  }
-
-  for (const type of types) {
-    if (type === element.type) {
-      return true;
+    if (!element) {
+      return false;
     }
-  }
 
-  return false;
+    for (const type of types) {
+      if (type === element.type) {
+        return true;
+      }
+    }
+
+    return false;
+  };
 };
