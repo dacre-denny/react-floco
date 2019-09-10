@@ -1,19 +1,16 @@
 import * as React from "react";
-import {
-  extractValue,
-  FunctionOrValue,
-  isType,
-  TypedValue,
-  TypedFunction
-} from "../helpers";
+import { extractValue, FunctionOrValue, isType, TypedValue, TypedFunction } from "../helpers";
 import { Case, CaseProps } from "./case";
 import { Default } from "./default";
 import { Loading } from "./loading";
 
-type SwitchProps = {
+interface SwitchProps {
   value: FunctionOrValue<Promise<TypedValue>> | FunctionOrValue<TypedValue>;
-};
-type SwitchState = { loading: boolean; value?: TypedValue };
+}
+interface SwitchState {
+  loading: boolean;
+  value?: TypedValue;
+}
 
 const isTypeCase = isType(Case);
 const isTypeSupported = isType(Default, Case, Loading);
@@ -24,9 +21,7 @@ const isTypeSupported = isType(Default, Case, Loading);
  *
  * @param value
  */
-const isTypeCaseMatch = (value?: TypedValue) => (
-  node: React.ReactNode
-): boolean => {
+const isTypeCaseMatch = (value?: TypedValue) => (node: React.ReactNode): boolean => {
   if (value !== undefined && isTypeCase(node)) {
     const element = node as React.ReactElement<CaseProps>;
 
@@ -76,9 +71,7 @@ export class Switch extends React.Component<SwitchProps, SwitchState> {
       return null;
     }
 
-    const childrenArray = Array.isArray(this.props.children)
-      ? this.props.children
-      : [this.props.children];
+    const childrenArray = Array.isArray(this.props.children) ? this.props.children : [this.props.children];
     if (!childrenArray.every(isTypeSupported)) {
       console.warn(`Switch: only Case or Default children are supported`);
     }
@@ -100,9 +93,7 @@ export class Switch extends React.Component<SwitchProps, SwitchState> {
     return null;
   }
 
-  private onValueResolved(
-    promise: Promise<TypedValue>
-  ): TypedFunction<Promise<TypedValue>, unknown> {
+  private onValueResolved(promise: Promise<TypedValue>): TypedFunction<Promise<TypedValue>, unknown> {
     return (value: TypedValue): void => {
       if (this.pendingPromise === promise) {
         // If value prop reference intact, update state from async completion
@@ -111,9 +102,7 @@ export class Switch extends React.Component<SwitchProps, SwitchState> {
     };
   }
 
-  private onValueRejected(
-    promise: Promise<TypedValue>
-  ): TypedFunction<Promise<TypedValue>, unknown> {
+  private onValueRejected(promise: Promise<TypedValue>): TypedFunction<Promise<TypedValue>, unknown> {
     return (): void => {
       if (this.pendingPromise === promise) {
         // If value prop reference intact and error occurred, update error state
@@ -136,10 +125,7 @@ export class Switch extends React.Component<SwitchProps, SwitchState> {
       this.pendingPromise = promise;
       this.setState({ loading: true });
 
-      promise.then(
-        this.onValueResolved(promise),
-        this.onValueRejected(promise)
-      );
+      promise.then(this.onValueResolved(promise), this.onValueRejected(promise));
     } else {
       // If value is non-promise, clear the pending promise flag blocking and previously
       // pending promise from updating state
