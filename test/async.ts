@@ -5,8 +5,7 @@ interface Deferred<T> {
   resolve: (value: T) => Promise<void>;
 }
 
-export const tick = async (delay = 1): Promise<void> =>
-  await new Promise((r): unknown => setTimeout(r, delay));
+export const tick = async (delay = 1): Promise<void> => await new Promise((r): unknown => setTimeout(r, delay));
 
 export const deferred = <T>(): Deferred<T> => {
   let resolve, reject;

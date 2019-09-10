@@ -28,7 +28,7 @@ const isTypeNotElseNotLoading = (element: React.ReactNode): boolean => !isType(E
 export class If extends React.Component<IfProps, IfState> {
   private pendingPromise?: Promise<TypedValue>;
 
-  constructor(props: IfProps) {
+  public constructor(props: IfProps) {
     super(props);
 
     this.pendingPromise = undefined;

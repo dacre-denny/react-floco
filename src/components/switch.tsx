@@ -46,7 +46,7 @@ const isTypeCaseMatch = (value?: TypedValue) => (node: React.ReactNode): boolean
 export class Switch extends React.Component<SwitchProps, SwitchState> {
   private pendingPromise?: Promise<TypedValue>;
 
-  constructor(props: SwitchProps) {
+  public constructor(props: SwitchProps) {
     super(props);
 
     this.pendingPromise = undefined;

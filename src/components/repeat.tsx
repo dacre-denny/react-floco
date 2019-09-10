@@ -16,7 +16,7 @@ const isNumber = (value: unknown): boolean => {
  * @param props
  */
 export class Repeat<T extends object> extends React.Component<RepeatProps<T>> {
-  constructor(props: RepeatProps<T>) {
+  public constructor(props: RepeatProps<T>) {
     super(props);
     this.renderIteration = this.renderIteration.bind(this);
   }
@@ -42,9 +42,7 @@ export class Repeat<T extends object> extends React.Component<RepeatProps<T>> {
       return null;
     }
 
-    return (
-      <>{Array.from({ length: this.props.times }, this.renderIteration)}</>
-    );
+    return <>{Array.from({ length: this.props.times }, this.renderIteration)}</>;
   }
 
   private renderIteration(_: unknown, key: number): JSX.Element | null {
