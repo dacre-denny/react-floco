@@ -1,7 +1,13 @@
 export const tick = async (delay = 1): Promise<void> =>
   await new Promise((r): unknown => setTimeout(r, delay));
+interface Deferred<T> {
+  promise: Promise<T>;
+  promiseFunction: () => Promise<T>;
+  reject: (err: Error) => Promise<void>;
+  resolve: (value: T) => Promise<void>;
+}
 
-export const deferred = <T>(): unknown => {
+export const deferred = <T>(): Deferred<T> => {
   let resolve, reject;
 
   const promise = new Promise<T>((res, rej): void => {
