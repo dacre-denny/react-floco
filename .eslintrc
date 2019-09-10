@@ -13,7 +13,9 @@
     "project": "./tsconfig.eslint.json"
   },
   "rules": {
-    "react/prop-types": 0
+    "react/prop-types": 0,
+    "indent": 0,
+    "@typescript-eslint/indent": ["error", 2]
   },
   "settings": {
     "react": {
