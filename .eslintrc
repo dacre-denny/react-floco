@@ -11,7 +11,7 @@
   },
   "rules": {
     "react/prop-types": 0,
-    "max-len": 0,
+    "max-len": ["error", 160],
     "indent": 0,
     "react/jsx-key": 0,
     "trailing-comma": 0,

@@ -85,7 +85,7 @@ describe("The Repeat component", (): void => {
     assert.lengthOf(wrapper.children(), 5);
     assert.isFalse(warnStub.called);
 
-    wrapper.children().forEach(child => {
+    wrapper.children().forEach((child): void => {
       assert.strictEqual(child.text(), "bar");
       assert.strictEqual(child.type(), "p");
       assert.strictEqual(child.prop("foo"), "bar");
