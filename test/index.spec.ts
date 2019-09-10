@@ -9,12 +9,12 @@ import { Else } from "../src/components/else";
 import { Loading } from "../src/components/loading";
 import * as API from "../src/index";
 
-describe("Floco API", () => {
-  it("exports Floco as the default", () => {
+describe("Floco API", (): void => {
+  it("exports Floco as the default", (): void => {
     assert.strictEqual(API.default, Components);
   });
 
-  it("exports each component of Floco library", () => {
+  it("exports each component of Floco library", (): void => {
     assert.strictEqual(API.Default, Default);
     assert.strictEqual(API.Case, Case);
     assert.strictEqual(API.Switch, Switch);
