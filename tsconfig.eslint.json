@@ -4,7 +4,6 @@
     "./src/**/*.ts",
     "./src/**/*.tsx",
     "./test/**/*.ts",
-    "./test/**/*.tsx",
-    "./test/helpers.js"
+    "./test/**/*.tsx"
   ]
 }
