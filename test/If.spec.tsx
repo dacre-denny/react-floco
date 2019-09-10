@@ -98,8 +98,8 @@ describe("The If component", () => {
 
       assert.isTrue(
         wrapper.containsAllMatchingElements([
-          <Else>bar</Else>,
-          <Else>was</Else>
+          <Else key={0}>bar</Else>,
+          <Else key={1}>was</Else>
         ])
       );
       assert.equal(wrapper.children().length, 2);
@@ -110,7 +110,7 @@ describe("The If component", () => {
       const warnStub = sinon.stub(console, "warn");
       const asyncDeferred = deferred<boolean>();
       const wrapper = mount(
-        <If condition={() => asyncDeferred.promise}>
+        <If condition={asyncDeferred.promiseFunction}>
           <Loading>loading</Loading>
           <Else>bar</Else>
           <p>foo</p>
@@ -120,7 +120,9 @@ describe("The If component", () => {
       await asyncDeferred.resolve(false);
       wrapper.update();
 
-      assert.isTrue(wrapper.containsAllMatchingElements([<Else>bar</Else>]));
+      assert.isTrue(
+        wrapper.containsAllMatchingElements([<Else key={0}>bar</Else>])
+      );
       assert.lengthOf(wrapper.children(), 1);
       assert.isFalse(warnStub.called);
     });
@@ -129,7 +131,7 @@ describe("The If component", () => {
       const warnStub = sinon.stub(console, "warn");
       const asyncDeferred = deferred<boolean>();
       const wrapper = mount(
-        <If condition={() => asyncDeferred.promise}>
+        <If condition={asyncDeferred.promiseFunction}>
           <Loading>loading</Loading>
           <Else>bar</Else>
           <p>foo</p>
@@ -139,7 +141,9 @@ describe("The If component", () => {
       await asyncDeferred.reject(new Error());
       wrapper.update();
 
-      assert.isTrue(wrapper.containsAllMatchingElements([<Else>bar</Else>]));
+      assert.isTrue(
+        wrapper.containsAllMatchingElements([<Else key={0}>bar</Else>])
+      );
       assert.lengthOf(wrapper.children(), 1);
       assert.isFalse(warnStub.called);
     });
@@ -161,8 +165,8 @@ describe("The If component", () => {
 
       assert.isTrue(
         wrapper.containsAllMatchingElements([
-          <Loading>foo</Loading>,
-          <Loading>bar</Loading>
+          <Loading key={0}>foo</Loading>,
+          <Loading key={1}>bar</Loading>
         ])
       );
       assert.equal(wrapper.children().length, 2);
@@ -184,7 +188,10 @@ describe("The If component", () => {
       wrapper.update();
 
       assert.isTrue(
-        wrapper.containsAllMatchingElements([<p>foo</p>, <div>bar</div>])
+        wrapper.containsAllMatchingElements([
+          <p key={0}>foo</p>,
+          <div key={1}>bar</div>
+        ])
       );
       assert.lengthOf(wrapper.children(), 2);
       assert.isFalse(warnStub.called);
@@ -203,7 +210,10 @@ describe("The If component", () => {
       wrapper.update();
 
       assert.isTrue(
-        wrapper.containsAllMatchingElements([<p>foo</p>, <div>bar</div>])
+        wrapper.containsAllMatchingElements([
+          <p key={0}>foo</p>,
+          <div key={1}>bar</div>
+        ])
       );
       assert.lengthOf(wrapper.children(), 2);
       assert.isFalse(warnStub.called);
@@ -226,7 +236,10 @@ describe("The If component", () => {
       wrapper.update();
 
       assert.isTrue(
-        wrapper.containsAllMatchingElements([<p>foo</p>, <div>bar</div>])
+        wrapper.containsAllMatchingElements([
+          <p key={0}>foo</p>,
+          <div key={1}>bar</div>
+        ])
       );
       assert.lengthOf(wrapper.children(), 2);
       assert.isFalse(warnStub.called);

@@ -59,7 +59,11 @@
     "source-map-support": "^0.5.13",
     "ts-node": "^8.3.0",
     "tslint": "^5.18.0",
-    "typescript": "^3.5.3"
+    "typescript": "^3.5.3",
+    "@typescript-eslint/eslint-plugin": "^2.2.0",
+    "eslint-plugin-react": "^7.14.3"
   },
-  "dependencies": {}
+  "dependencies": {
+    "remark-lint-list-item-indent": "^1.0.4"
+  }
 }
