@@ -43,6 +43,7 @@ function Status (props) {
     -   Conditional if statements
     -   Count controlled loops
     -   Support for asynchronous evaluation and rendering
+
 -   Typescript support
 
 ## Examples
@@ -197,13 +198,13 @@ The Repeat component also allows transmission of additional props to the callbac
 
 ## Run tests
 
-```
+```bash
 $ npm run test
 ```
 
 ## Run examples
 
-```
+```bash
 $ docker-compose up
 ```
 
