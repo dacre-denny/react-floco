@@ -9,7 +9,7 @@
     <img src="https://coveralls.io/repos/github/dacre-denny/react-floco/badge.svg?branch=master" alt="Coverage Status">
   </a>
   <a href="https://www.npmjs.com/package/react-floco">
-    <img src="https://img.shields.io/npm/dm/react-svg" alt="Downloads">
+    <img src="https://img.shields.io/npm/dm/react-floco" alt="Downloads">
   </a>
   <a href="https://www.codacy.com?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dacre-denny/react-floco&amp;utm_campaign=Badge_Grade"><img src="https://api.codacy.com/project/badge/Grade/ddc6850a2f2b4f94a621ab40ce22e557"/></a>
 </p>
