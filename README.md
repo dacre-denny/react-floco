@@ -25,6 +25,9 @@ npm install --save react-floco
 ```
 import { Switch, Case, Default } from 'react-floco';
 
+/* 
+Renders a status based on color prop 
+*/
 function Status (props) {
 
     return (<Switch value={props.color}>
@@ -38,17 +41,19 @@ function Status (props) {
 
 ## Features
 
--   Declarative rendering primitives that mimic flow control for
-    -   Switch statements
-    -   Conditional if statements
-    -   Count controlled loops
-    -   Support for asynchronous evaluation and rendering
+-   Declarative flow control:
+    -   [Switch statements](###Switch-statements)
+    -   [Conditional statements](###Conditional-statements)
+    -   [Count controlled loop](###Count-controlled-loops)
 
+-   Support for [asynchronous evaluation and rendering](##Asynchronous-support)
 -   Typescript support
 
-## Examples
+## Library
 
-Use the Switch and Case components to render a badge name from a number of known code. The Default component is used to render a result in the case of no value match:
+### Switch statements
+
+Use the `<Switch>` and `<Case>` components to render a badge name from a number of known code. The `<Default>` component is used to render a result in the case of no value match:
 
 ```
 import { Switch, Case, Default } from 'react-floco';
@@ -65,7 +70,19 @@ function UserBadge (props) {
 }
 ```
 
-Use the If and Else components to perform conditional rendering declaratively:
+The `<Switch>` and `<Case>` components allow matching across mixed value types on the `for` prop of `<Case>` components:
+
+```
+<Switch value={data}>
+    <Case for={1}>Data {data} is a number</Case>
+    <Case for={true}>Data {data} is a boolean</Case>
+    <Case for={'foo'}>Data {data} is a string</Case>
+</Switch>
+```
+
+### Conditional statements
+
+The `<If>` and `<Else>` components to perform conditional rendering declaratively:
 
 ```
 import { If, Else } from 'react-floco';
@@ -79,7 +96,9 @@ function RenderResponse (props) {
 }
 ```
 
-Use the Repeat component to render a component multiple times:
+### Count controlled loops
+
+Components can be rendered multiple times using the `<Repeat>` component. Unlike other components in this library, `<Repeat>` renders children by a callback function. The callback is passed a unique numerical `key` prop that corresponds to the current render iteration:
 
 ```
 import { Repeat, If, Else } from 'react-floco';
@@ -93,107 +112,87 @@ function ItemsOrPlaceholders (props) {
 }
 ```
 
-## Usage
-
-### Conditional rendering with Switch, Case and Default
-
-The Switch component mimics the behavior of a regular [switch statement](https://en.wikipedia.org/wiki/Switch_statement) during rendering. The Switch will render any Case child that matches the current `value` prop of the Switch. If no match occurs and one or more Default component are present, then those will be rendered:
+The `<Repeat>` component will automatically pass any `props` that are applied to it, through to the render callback:
 
 ```
-    <Switch value={age}>
-        <Case for={1}>You're one</Case>
-        <Case for={2}>You're two</Case>
-        <Case for={3}>You're three</Case>
-        <Default>You're old!</Default>
-    </Switch>
+<Repeat times={5} name={userName} age={userAge}>{ (props) => <UserItem {...props} /> {/* props contains name and age */} }</Repeat>
 ```
 
-Multiple Case matches are possible:
+## Asynchronous support
+
+The `<Switch>` and `<If>` components support asynchronous evaluation and rendering. If a callback function that returns a `Promise` is supplied to the `value` prop of the `<Switch>` component, the resolved value will be used to determine the `<Case>` to render:
 
 ```
-    <Switch value={role}>
-        <Case for={'admin'}>As an administrator you have total control</Case>
-        <Case for={'user'}>Contact your system administrator if you need help</Case>
-        <Case for={'admin'}><a href="/admin/area">Admin area</button></Case>
-        <Default>Please <a href="/login">login</a></Default>
-    </Switch>
+<Switch value={() => fetchUserStatus()}>
+    <Case for={"offline"}>User has left the building!</Case>
+    <Case for={"online"}>The user is online</Case>
+</Switch>
 ```
 
-Matches across mixed types are possible:
+If an asynchronous `value` fails to resolve then any `<Default>` blocks that are present will be rendered:
 
 ```
-    <Switch value={data}>
-        <Case for={1}>Data is a number</Case>
-        <Case for={true}>Data is a boolean</Case>
-    </Switch>
+<Switch value={Promise.reject()}>
+    <Case for={true}>Impossible!</Case>
+    <Default>Either no matching case exists, or the value promise was rejected..</Default>
+</Switch>
 ```
 
-The value prop can be an actual value or a function. Asynchronous functions are also supported and can be coupled with a Loading component:
+The `<Loading>` component can be used in tandem with asynchronous rendering. The `<Loading>` component(s) are only rendered while the `Promise` on the `value` prop is in a pending state:
 
 ```
-    <Switch value={() => fetchUserRole()}>
-        <Loading>Determining your privileges</Loading>
-        <Case for={'admin'}>You have full privileges</Case>
-        <Case for={'user'}>You have limited privileges</Case>
-    </Switch>
+<Switch value={() => fetchEmotion()}>
+    <Loading>I'm busy figuring someone out..</Loading>
+    <Case for={'happy'}>I figured out they're happy!</Case>
+    <Case for={'sad'}>I think they're sad!</Case>
+    <Default>I couldn't read them..</Default>
+</Switch>
 ```
 
-### Conditional rendering with If and Else
-
-The If component mimics the behavior of a [conditional statement](<https://en.wikipedia.org/wiki/Control_flow#If-then-(else)_statements>) to provide declarative conditional rendering. The If component will render when the `condition` prop evaluates to `true`. If the condition evaluates to `false` and an Else component is present, then that will be rendered instead:
+Asynchronous rendering is possible in the same way for the `<If>` component:
 
 ```
-    <If condition={isExpert}>
-        <p>You are at the top of your game</p>
-        <Else><a href="/up-skill">Click here to up skill</a></Else>
-    </Switch>
+<If value={() => fetchIsHeadsFromTails()}>
+    <Loading>The coin is spinning..</Loading>
+    <>Landed on heads!</>
+    <Else>Landed on tails!</Else>
+</If>
 ```
 
-Multiple Else components are possible:
+## Duplicate branching
+
+Duplicate branching is supported for `<If>` and `<Switch>` components:
 
 ```
-    <If condition={didSucceed}>
-        <Else>You failed</Else>
-        <b>You passed</b>
-        <Else><a href="/retry>Try again</a></Else>
-    </If>
+<Switch value={userAge}>
+    <Case for={1}>You're one year old</Case>
+    <Case for={45}>You're forty five</Case>
+    <Case for={100}>You're one hundred</Case>
+    <hr />
+    <Case for={1}>You are a baby</Case>
+    <Case for={45}>You are an adult</Case>
+    <Case for={100}>You are old</Case>
+    <Default>I don't know what to say</Default>
+</Switch>
+
+<If condition={isSunny}>
+    {/* Rendered when sunny */}
+    <>It's sunny</> 
+    <Else>It's not sunny</Else>
+    <hr/>
+    {/* Also rendered when sunny */}
+    <>(Wear sunscreen)</>
+</If>
 ```
 
-The `condition` prop can be a boolean value or a function that returns a boolean result. Asynchronous functions are supported and can be coupled with a Loading component:
-
-```
-    <If condition={() => fetchIsLoggedIn()}>
-        You're logged in!
-        <Loading>Please wait...</Loading>
-        <Else>You are not logged in :(</Else>
-    </If>
-```
-
-### Rendering multiple components with Repeat
-
-The Repeat component mimics the behavior of a [count controlled loop](https://en.wikipedia.org/wiki/Control_flow#Count-controlled_loops), providing a declarative means of rendering a component multiple times. The Repeat component renders children via a callback function through which a `key` for the current iteration is provided:
-
-```
-    <Repeat times={5}>
-        ({ key }) => <p key={key}>I render five times</p>
-    </Repeat>
-```
-
-The Repeat component also allows transmission of additional props to the callback function:
-
-```
-    <Repeat times={10} greet={"Bob"} >
-        ({ key, greet }) => <p key={key}>Hi { greet}! I render ten times</p>
-    </Repeat>
-```
 
 ## API
 
 | Component | Prop      | Type           | Required | Description                                                                                                                                                                                                                                                                                                                                                                            |
 | --------- | --------- | -------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Switch    | value     | object         | yes      | The value that Case components of the Switch are matched against. If a function is provided, the function will be invoked and the result of that function will be used for Case matching. If the function is asynchronous, any Loading components will be rendered while the asynchronous function is running and, if a value is resolved, that will be used for Case matching.        |
-| Case      | for       | object         | yes      | The value that represents this case.                                                                                                                                                                                                                                                                                                                                                   |
-| If        | condition | bool, function | yes      | The condition that determines if the contents of the component is rendered. If a function is supplied, the contents of the If component will be rendered if that function returns true. If the function is asynchronous, any Loading components will be rendered while the asynchronous function is running and, if a true value is resolved, the contents of the If will be rendered. |
+| Switch    | value     | object         | yes      | Controls rendering of one or more matching child Case components of the Switch statement. If a function is provided, it is invoked and the result is used for Case matching. If an asynchronous value is encountered, any Loading children components will be rendered while the asynchronous function is in a pending state. If a value is resolved it will be used for Case matching and, if the promise is rejected, any Default blocks that are present will be rendered.|
+| Case      | for       | object         | yes      | The value for which this Case is rendered.                                                                                                                                                                                                                                                                                                                                                   |
+| If        | condition | bool, function | yes      | Controls the rendering result of the If statement where falsey will render the contents of any child Else components, and truthy will render non-Else children components. If a function is supplied, it is invoked and the result is interpreted as truthy or falsey to determine the rendered result of the If component. If the condition is asynchronous, any Loading components present will be rendered while the asynchronous function is in a pending state. A promise that resolves to a truthy value causes the If content to be rendered, otherwise a falsey value or rejected promise will cause any Else children to be rendered if present. |
 | Repeat    | times     | number         | yes      | The number of times that children components are rendered                                                                                                                                                                                                                                                                                                                              |
 
 ## Run tests
