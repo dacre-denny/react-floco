@@ -18,11 +18,11 @@
 
 ## Quick Start
 
-```
+```bash
 npm install --save react-floco
 ```
 
-```
+```jsx
 import { Switch, Case, Default } from 'react-floco';
 
 /* 
@@ -92,7 +92,7 @@ function RenderResponse (props) {
 
     return (<If condition={ props.response.ok }>
         Got successful response. Everything worked as expected.
-        <Else>Something went wrong. Error code: {props.response.code}</Else>
+        <Else>Something went wrong: {props.response.code}</Else>
     </If>);
 }
 ```
@@ -107,7 +107,7 @@ import { Repeat, If, Else } from 'react-floco';
 function ItemsOrPlaceholders (props) {
 
     return (<If condition={props.loading}>
-        <Repeat times={5}>{ ({ key }) => <Placeholder key={key} /> }</Repeat>
+        <Repeat times={5}>{ ({ key }) => <Holder key={key} /> }</Repeat>
         <Else>{ props.items.map(item => <Item item={item} />) }</Else>
     </If>);
 }
@@ -117,7 +117,10 @@ The `<Repeat>` component will automatically pass any `props` that are applied to
 
 ```jsx
 <Repeat times={5} name={userName} age={userAge}>
-    { (props) => <UserItem {...props} /> {/* props contains name and age */} }
+    { 
+        /* props contains name and age */
+        (props) => <UserItem {...props} /> 
+    }
 </Repeat>
 ```
 
@@ -157,7 +160,7 @@ Asynchronous rendering is possible in the same way for the `<If>` component:
 ```jsx
 <If value={() => fetchIsHeadsFromTails()}>
     <Loading>The coin is spinning..</Loading>
-    <>Landed on heads!</>
+    <p>Landed on heads!</p>
     <Else>Landed on tails!</Else>
 </If>
 ```
@@ -180,11 +183,11 @@ Duplicate branching is supported for `<If>` and `<Switch>` components:
 
 <If condition={isSunny}>
     {/* Rendered when sunny */}
-    <>It's sunny</> 
+    <p>It's sunny</p> 
     <Else>It's not sunny</Else>
     <hr/>
     {/* Also rendered when sunny */}
-    <>(Wear sunscreen)</>
+    <p>(Wear sunscreen)</p>
 </If>
 ```
 
@@ -200,13 +203,13 @@ Duplicate branching is supported for `<If>` and `<Switch>` components:
 ## Run tests
 
 ```bash
-$ npm run test
+npm run test
 ```
 
 ## Run examples
 
 ```bash
-$ docker-compose up
+docker-compose up
 ```
 
 ## License
