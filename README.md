@@ -47,6 +47,7 @@ function Status (props) {
     -   [Count controlled loop](###Count-controlled-loops)
 
 -   Support for [asynchronous evaluation and rendering](##Asynchronous-support)
+
 -   Typescript support
 
 ## Library
@@ -55,7 +56,7 @@ function Status (props) {
 
 Use the `<Switch>` and `<Case>` components to render a badge name from a number of known code. The `<Default>` component is used to render a result in the case of no value match:
 
-```
+```jsx
 import { Switch, Case, Default } from 'react-floco';
 
 function UserBadge (props) {
@@ -72,7 +73,7 @@ function UserBadge (props) {
 
 The `<Switch>` and `<Case>` components allow matching across mixed value types on the `for` prop of `<Case>` components:
 
-```
+```jsx
 <Switch value={data}>
     <Case for={1}>Data {data} is a number</Case>
     <Case for={true}>Data {data} is a boolean</Case>
@@ -84,7 +85,7 @@ The `<Switch>` and `<Case>` components allow matching across mixed value types o
 
 The `<If>` and `<Else>` components to perform conditional rendering declaratively:
 
-```
+```jsx
 import { If, Else } from 'react-floco';
 
 function RenderResponse (props) {
@@ -100,7 +101,7 @@ function RenderResponse (props) {
 
 Components can be rendered multiple times using the `<Repeat>` component. Unlike other components in this library, `<Repeat>` renders children by a callback function. The callback is passed a unique numerical `key` prop that corresponds to the current render iteration:
 
-```
+```jsx
 import { Repeat, If, Else } from 'react-floco';
 
 function ItemsOrPlaceholders (props) {
@@ -114,7 +115,7 @@ function ItemsOrPlaceholders (props) {
 
 The `<Repeat>` component will automatically pass any `props` that are applied to it, through to the render callback:
 
-```
+```jsx
 <Repeat times={5} name={userName} age={userAge}>
     { (props) => <UserItem {...props} /> {/* props contains name and age */} }
 </Repeat>
@@ -124,7 +125,7 @@ The `<Repeat>` component will automatically pass any `props` that are applied to
 
 The `<Switch>` and `<If>` components support asynchronous evaluation and rendering. If a callback function that returns a `Promise` is supplied to the `value` prop of the `<Switch>` component, the resolved value will be used to determine the `<Case>` to render:
 
-```
+```jsx
 <Switch value={() => fetchUserStatus()}>
     <Case for={"offline"}>User has left the building!</Case>
     <Case for={"online"}>The user is online</Case>
@@ -133,7 +134,7 @@ The `<Switch>` and `<If>` components support asynchronous evaluation and renderi
 
 If an asynchronous `value` fails to resolve then any `<Default>` blocks that are present will be rendered:
 
-```
+```jsx
 <Switch value={Promise.reject()}>
     <Case for={true}>Impossible!</Case>
     <Default>Either no matching case exists, or the value promise was rejected..</Default>
@@ -142,7 +143,7 @@ If an asynchronous `value` fails to resolve then any `<Default>` blocks that are
 
 The `<Loading>` component can be used in tandem with asynchronous rendering. The `<Loading>` component(s) are only rendered while the `Promise` on the `value` prop is in a pending state:
 
-```
+```jsx
 <Switch value={() => fetchEmotion()}>
     <Loading>I'm busy figuring someone out..</Loading>
     <Case for={'happy'}>I figured out they're happy!</Case>
@@ -153,7 +154,7 @@ The `<Loading>` component can be used in tandem with asynchronous rendering. The
 
 Asynchronous rendering is possible in the same way for the `<If>` component:
 
-```
+```jsx
 <If value={() => fetchIsHeadsFromTails()}>
     <Loading>The coin is spinning..</Loading>
     <>Landed on heads!</>
@@ -165,7 +166,7 @@ Asynchronous rendering is possible in the same way for the `<If>` component:
 
 Duplicate branching is supported for `<If>` and `<Switch>` components:
 
-```
+```jsx
 <Switch value={userAge}>
     <Case for={1}>You're one year old</Case>
     <Case for={45}>You're forty five</Case>
@@ -186,7 +187,6 @@ Duplicate branching is supported for `<If>` and `<Switch>` components:
     <>(Wear sunscreen)</>
 </If>
 ```
-
 
 ## API
 
