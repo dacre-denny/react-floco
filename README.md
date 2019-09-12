@@ -3,7 +3,7 @@
 
 <p align="center">
   <a href="https://travis-ci.org/dacre-denny/react-floco">
-    <img src="https://api.travis-ci.org/dacre-denny/react-svg?branch=master" alt="build">
+    <img src="https://travis-ci.org/dacre-denny/react-floco.svg?branch=master" alt="build">
   </a>
   <a href="https://coveralls.io/github/dacre-denny/react-floco?branch=master">
     <img src="https://coveralls.io/repos/github/dacre-denny/react-floco/badge.svg?branch=master" alt="Coverage Status">
