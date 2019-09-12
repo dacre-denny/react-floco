@@ -24,7 +24,7 @@ describe("The Repeat component", (): void => {
 
       wrapper.setProps({ times: "foo" });
       assert.isTrue(wrapper.isEmptyRender());
-      assert.isTrue(warnStub.called);
+      assert.isTrue(warnStub.calledWith(`Repeat: children prop must be valid function`));
     });
 
     it("Should render nothing if invalid times value type provide", (): void => {
@@ -33,15 +33,18 @@ describe("The Repeat component", (): void => {
 
       wrapper.setProps({ times: null });
       assert.isTrue(wrapper.isEmptyRender());
-      assert.isTrue(warnStub.called);
+      assert.isTrue(warnStub.calledWith(`Repeat: times prop must be valid number`));
+      warnStub.resetHistory();
 
       wrapper.setProps({ times: undefined });
       assert.isTrue(wrapper.isEmptyRender());
-      assert.isTrue(warnStub.called);
+      assert.isTrue(warnStub.calledWith(`Repeat: times prop must be valid number`));
+      warnStub.resetHistory();
 
       wrapper.setProps({ times: "foo" });
       assert.isTrue(wrapper.isEmptyRender());
-      assert.isTrue(warnStub.called);
+      assert.isTrue(warnStub.calledWith(`Repeat: times prop must be valid number`));
+      warnStub.resetHistory();
     });
 
     it("should render no children for zero times prop", (): void => {
@@ -57,7 +60,7 @@ describe("The Repeat component", (): void => {
       const wrapper = mount(<Repeat times={-15}>{(props): React.ReactElement => <p {...props}>foo</p>}</Repeat>);
 
       assert.isTrue(wrapper.isEmptyRender());
-      assert.isTrue(warnStub.called);
+      assert.isTrue(warnStub.calledWith(`Repeat: times prop must non-negative`));
     });
   });
 
