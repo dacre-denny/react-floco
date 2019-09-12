@@ -65,13 +65,9 @@ describe("The Repeat component", (): void => {
     const warnStub = sinon.stub(console, "warn");
     const wrapper = mount(<Repeat times={7}>{(props): React.ReactElement => <p {...props}>foo</p>}</Repeat>);
 
+    assert.isTrue(wrapper.containsAllMatchingElements([<p>foo</p>]));
     assert.lengthOf(wrapper.children(), 7);
     assert.isFalse(warnStub.called);
-
-    wrapper.children().forEach(child => {
-      assert.strictEqual(child.text(), "foo");
-      assert.strictEqual(child.type(), "p");
-    });
   });
 
   it("should pass props through to rendered children", (): void => {
@@ -82,15 +78,9 @@ describe("The Repeat component", (): void => {
       </Repeat>
     );
 
+    const mockProps = { foo: "bar", was: 1, here: null };
+    assert.isTrue(wrapper.containsAllMatchingElements([<p {...mockProps}>bar</p>]));
     assert.lengthOf(wrapper.children(), 5);
     assert.isFalse(warnStub.called);
-
-    wrapper.children().forEach((child): void => {
-      assert.strictEqual(child.text(), "bar");
-      assert.strictEqual(child.type(), "p");
-      assert.strictEqual(child.prop("foo"), "bar");
-      assert.strictEqual(child.prop("was"), 1);
-      assert.strictEqual(child.prop("here"), null);
-    });
   });
 });
