@@ -38,12 +38,12 @@ function Status (props) {
 
 ## Features
 
-  *   Declarative rendering primitives that mimic flow control for
-      *   Switch statements
-      *   Conditional if statements
-      *   Count controlled loops
-  *   Support for asynchronous evaluation and rendering
-  *   Typescript support
+-   Declarative rendering primitives that mimic flow control for
+    -   Switch statements
+    -   Conditional if statements
+    -   Count controlled loops
+    -   Support for asynchronous evaluation and rendering
+-   Typescript support
 
 ## Examples
 
@@ -198,13 +198,13 @@ The Repeat component also allows transmission of additional props to the callbac
 ## Run tests
 
 ```
-npm run test
+$ npm run test
 ```
 
 ## Run examples
 
 ```
-docker-compose up
+$ docker-compose up
 ```
 
 ## License
