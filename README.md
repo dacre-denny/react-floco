@@ -39,9 +39,9 @@ function Status (props) {
 ## Features
 
   * Declarative rendering primitives that mimic flow control for
-    * Switch statements
-    * Conditional if statements
-    * Count controlled loops
+      * Switch statements
+      * Conditional if statements
+      * Count controlled loops
   * Support for asynchronous evaluation and rendering
   * Typescript support
 

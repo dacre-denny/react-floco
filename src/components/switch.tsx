@@ -21,14 +21,14 @@ const isTypeSupported = isType(Default, Case, Loading);
  *
  * @param value
  */
-const isTypeCaseMatch = (value?: TypedValue) => (node: React.ReactNode): boolean => {
-  if (value !== undefined && isTypeCase(node)) {
-    const element = node as React.ReactElement<CaseProps>;
-
-    return element.props.for === value;
-  }
-
-  return false;
+const isTypeCaseMatch = (value?: TypedValue): TypedFunction<React.ReactNode, boolean> => {
+  return (node: React.ReactNode): boolean => {
+    if (value !== undefined && isTypeCase(node)) {
+      const element = node as React.ReactElement<CaseProps>;
+      return element.props.for === value;
+    }
+    return false;
+  };
 };
 
 /**
