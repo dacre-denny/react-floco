@@ -115,7 +115,9 @@ function ItemsOrPlaceholders (props) {
 The `<Repeat>` component will automatically pass any `props` that are applied to it, through to the render callback:
 
 ```
-<Repeat times={5} name={userName} age={userAge}>{ (props) => <UserItem {...props} /> {/* props contains name and age */} }</Repeat>
+<Repeat times={5} name={userName} age={userAge}>
+    { (props) => <UserItem {...props} /> {/* props contains name and age */} }
+</Repeat>
 ```
 
 ## Asynchronous support
