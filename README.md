@@ -26,9 +26,9 @@ npm install --save react-floco
 import { Switch, Case, Default } from 'react-floco';
 
 /* 
-Renders a status based on color prop 
+Renders a status based on color 
 */
-function Status (props) {
+function StatusFromColor (props) {
 
     return (<Switch value={props.color}>
         <Case for={"red"}>Danger!</Case>
@@ -41,7 +41,7 @@ function Status (props) {
 
 ## Features
 
--   Declarative flow control:
+-   Declarative flow control for:
     -   [Switch statements](###Switch-statements)
     -   [Conditional statements](###Conditional-statements)
     -   [Count controlled loop](###Count-controlled-loops)
@@ -50,18 +50,21 @@ function Status (props) {
 
 -   Typescript support
 
-## Library
+## Component library
 
 ### Switch statements
 
-Use the `<Switch>` and `<Case>` components to render a badge name from a number of known code. The `<Default>` component is used to render a result in the case of no value match:
+The `<Switch>` component controls rendering of child `<Case>` components where the `for` prop matches the current `value` of that `<Switch>`. Together, these components mimic the behavior of [switch-case statements](https://en.wikipedia.org/wiki/Control_flow#Case_and_switch_statements) for component rendering:
 
 ```jsx
 import { Switch, Case, Default } from 'react-floco';
 
+/**
+ * Render a badge type based on the badgeCode prop
+ */
 function UserBadge (props) {
 
-    return (<Switch value={props.user.badgeCode}>
+    return (<Switch value={props.badgeCode}>
         <Case for={"p"}>Platinum badge</Case>
         <Case for={"g"}>Gold badge</Case>
         <Case for={"s"}>Silver badge</Case>
@@ -69,9 +72,10 @@ function UserBadge (props) {
         <Default>No badge earned</Default>
     </Switch>);
 }
+
 ```
 
-The `<Switch>` and `<Case>` components allow matching across mixed value types on the `for` prop of `<Case>` components:
+The `<Switch>` component also allows for matching across mixed value types for `<Case>` components:
 
 ```jsx
 <Switch value={data}>
@@ -81,61 +85,106 @@ The `<Switch>` and `<Case>` components allow matching across mixed value types o
 </Switch>
 ```
 
+Multiple `<Case>` components for the same `value` case are also possible:
+
+```jsx
+<Switch value={data}>
+    <Case for={1}>Data is a number</Case>
+    <Case for={true}>Data is a boolean</Case>
+    <hr/>
+    <Case for={true}>Data is not false</Case>
+    <Case for={1}>Data is less than 5</Case>
+</Switch>
+```
+
+The `value` prop also supports callback functions - the switch automatically invokes the function and will use the result for `<Case>` matching. [Asynchronous values and functions](##Asynchronous-support) are also supported:
+
+```jsx
+<Switch value={() => getUserStatus()}>
+    <Case for={"online"}>User is onboard!</Case>
+    <Case for={"offline"}>User isn't around..</Case>
+    <Default>Hmm, not sure..</Default>
+</Switch>
+```
+
 ### Conditional statements
 
-The `<If>` and `<Else>` components to perform conditional rendering declaratively:
+The `<If>` component controls rendering of child content when the `condition` prop evaluates "truthy". If `<Else>` child components are present, they will be rendered when `condition` is evaluated "falsey":
 
 ```jsx
 import { If, Else } from 'react-floco';
 
+/**
+ * Render a human friendly message based on responseIsOk prop
+ */
 function RenderResponse (props) {
 
-    return (<If condition={ props.response.ok }>
-        Got successful response. Everything worked as expected.
-        <Else>Something went wrong: {props.response.code}</Else>
+    return (<If condition={ props.responseIsOk }>
+        Got successful response. Everything worked as expected!
+        <Else>Something went wrong.</Else>
     </If>);
 }
+```
+
+As with the `<Case>` and `<Default>` components, multiple `<Else>` components are allowed for a single `<If>` component. All `<Else>` components will be rendered when `condition` evaluates "falsey":
+
+```jsx
+<If condition={isError}>
+    <p>Something went wrong!</p>
+    <Else>Phew..</Else>
+    <hr/>
+    <Else>No error. Everything went as expected!</Else>
+</If>
+```
+
+Like the `value` propr for `<Switch>`, the `condition` prop also supports callback functions as well as [promises](##Asynchronous-support):
+
+```jsx
+<If condition={() => isLoggedIn()}>
+    <p>Welcome friend!</p>
+    <Else>Who goes there?</Else>
+</If>
 ```
 
 ### Count controlled loops
 
-Components can be rendered multiple times using the `<Repeat>` component. Unlike other components in this library, `<Repeat>` renders children by a callback function. The callback is passed a unique numerical `key` prop that corresponds to the current render iteration:
+The `<Repeat>` component allows a single component to be rendered multiple times. Unlike `<Switch>` and `<If>`, the `<Repeat>` component renders children via a callback function. The render callback passes a unique `key` prop that corresponds to the current iteration index:
 
 ```jsx
-import { Repeat, If, Else } from 'react-floco';
+import { Repeat } from 'react-floco';
 
-function ItemsOrPlaceholders (props) {
+/**
+ * Renders an annoying list of questions
+ */
+function AnnoyingList (props) {
 
-    return (<If condition={props.loading}>
-        <Repeat times={5}>{ ({ key }) => <Holder key={key} /> }</Repeat>
-        <Else>{ props.items.map(item => <Item item={item} />) }</Else>
-    </If>);
+    return (<Repeat times={props.count}>
+    { ({ key }) => <p key={key}>Are we there yet?</p> }
+    </Repeat>);
 }
 ```
 
-The `<Repeat>` component will automatically pass any `props` that are applied to it, through to the render callback:
+The render callback will automatically pass through any additional `props` that are passed to `<Repeat>`:
 
 ```jsx
-<Repeat times={5} name={userName} age={userAge}>
-    { 
-        /* props contains name and age */
-        (props) => <UserItem {...props} /> 
-    }
+<Repeat times={5} name={'Bob'} age={32}>
+    { /* props contains name and age */ }
+    { (props) => <UserItem {...props} /> }
 </Repeat>
 ```
 
 ## Asynchronous support
 
-The `<Switch>` and `<If>` components support asynchronous evaluation and rendering. If a callback function that returns a `Promise` is supplied to the `value` prop of the `<Switch>` component, the resolved value will be used to determine the `<Case>` to render:
+The `<Switch>` and `<If>` components support asynchronous evaluation and rendering. If a `Promise` is passed to the `value` prop of the `<Switch>` component, then cases will be matched on the resolved value:
 
 ```jsx
-<Switch value={() => fetchUserStatus()}>
+<Switch value={fetchUserStatus}>
     <Case for={"offline"}>User has left the building!</Case>
     <Case for={"online"}>The user is online</Case>
 </Switch>
 ```
 
-If an asynchronous `value` fails to resolve then any `<Default>` blocks that are present will be rendered:
+If an asynchronous `value` is rejected then any `<Default>` blocks that are present will be rendered:
 
 ```jsx
 <Switch value={Promise.reject()}>
@@ -144,10 +193,10 @@ If an asynchronous `value` fails to resolve then any `<Default>` blocks that are
 </Switch>
 ```
 
-The `<Loading>` component can be used in tandem with asynchronous rendering. The `<Loading>` component(s) are only rendered while the `Promise` on the `value` prop is in a pending state:
+The `<Loading>` component can be used in tandem with asynchronous rendering. The `<Loading>` component(s) are only rendered if the `value` prop's `Promise` is in a pending state:
 
 ```jsx
-<Switch value={() => fetchEmotion()}>
+<Switch value={fetchEmotion}>
     <Loading>I'm busy figuring someone out..</Loading>
     <Case for={'happy'}>I figured out they're happy!</Case>
     <Case for={'sad'}>I think they're sad!</Case>
@@ -155,39 +204,13 @@ The `<Loading>` component can be used in tandem with asynchronous rendering. The
 </Switch>
 ```
 
-Asynchronous rendering is possible in the same way for the `<If>` component:
+The `<If>` component supports asynchronous rendering in the same way:
 
 ```jsx
-<If value={() => fetchIsHeadsFromTails()}>
+<If value={fetchIsHeadsFromTails}>
     <Loading>The coin is spinning..</Loading>
     <p>Landed on heads!</p>
     <Else>Landed on tails!</Else>
-</If>
-```
-
-## Duplicate branching
-
-Duplicate branching is supported for `<If>` and `<Switch>` components:
-
-```jsx
-<Switch value={userAge}>
-    <Case for={1}>You're one year old</Case>
-    <Case for={45}>You're forty five</Case>
-    <Case for={100}>You're one hundred</Case>
-    <hr />
-    <Case for={1}>You are a baby</Case>
-    <Case for={45}>You are an adult</Case>
-    <Case for={100}>You are old</Case>
-    <Default>I don't know what to say</Default>
-</Switch>
-
-<If condition={isSunny}>
-    {/* Rendered when sunny */}
-    <p>It's sunny</p> 
-    <Else>It's not sunny</Else>
-    <hr/>
-    {/* Also rendered when sunny */}
-    <p>(Wear sunscreen)</p>
 </If>
 ```
 
@@ -195,10 +218,10 @@ Duplicate branching is supported for `<If>` and `<Switch>` components:
 
 | Component | Prop      | Type           | Required | Description                                                                                                                                                                                                                                                                                                                                                                            |
 | --------- | --------- | -------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Switch    | value     | object         | yes      | Controls rendering of one or more matching child Case components of the Switch statement. If a function is provided, it is invoked and the result is used for Case matching. If an asynchronous value is encountered, any Loading children components will be rendered while the asynchronous function is in a pending state. If a value is resolved it will be used for Case matching and, if the promise is rejected, any Default blocks that are present will be rendered.|
-| Case      | for       | object         | yes      | The value for which this Case is rendered.                                                                                                                                                                                                                                                                                                                                                   |
-| If        | condition | bool, function | yes      | Controls the rendering result of the If statement where falsey will render the contents of any child Else components, and truthy will render non-Else children components. If a function is supplied, it is invoked and the result is interpreted as truthy or falsey to determine the rendered result of the If component. If the condition is asynchronous, any Loading components present will be rendered while the asynchronous function is in a pending state. A promise that resolves to a truthy value causes the If content to be rendered, otherwise a falsey value or rejected promise will cause any Else children to be rendered if present. |
-| Repeat    | times     | number         | yes      | The number of times that children components are rendered                                                                                                                                                                                                                                                                                                                              |
+| Switch    | value     | object         | yes      | Specifies the value that Case children will be matched against. If a function is specified, the result of that function call is used for Case matching. |
+| Case      | for       | object         | yes      | The value that this Case is rendered for.                                                                                                                                                                                                                                                                                                                                                   |
+| If        | condition | bool, function | yes      | Determines if the content of the If component is rendered. The component is rendered if a truthy value, or a function that returns a truthy value, is specified. |
+| Repeat    | times     | number         | yes      | The number of times that children are rendered.                                                                                                                                                                                                                                                                                                                              |
 
 ## Run tests
 
