@@ -12,7 +12,7 @@
     "tdd": "mocha -r ts-node/register -r test/helpers --watch-extensions ts,tsx -b -w test/*.spec.*",
     "test": "mocha -r ts-node/register -r test/helpers -b test/*.spec.*",
     "coverage": "nyc mocha -r ts-node/register -r test/helpers -b test/*.spec.*",
-    "report": "nyc report --reporter=text-lcov | coveralls"
+    "coveralls": "nyc report --reporter=text-lcov | coveralls"
   },
   "husky": {
     "hooks": {
