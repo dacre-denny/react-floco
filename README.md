@@ -42,11 +42,11 @@ function StatusFromColor (props) {
 ## Features
 
 -   Declarative flow control for:
-    -   [Switch statements](###Switch-statements)
-    -   [Conditional statements](###Conditional-statements)
-    -   [Count controlled loop](###Count-controlled-loops)
+    -   [Switch statements](#Switch-statements)
+    -   [Conditional statements](#Conditional-statements)
+    -   [Count controlled loop](#Count-controlled-loops)
 
--   Support for [asynchronous evaluation and rendering](##Asynchronous-support)
+-   Support for [asynchronous evaluation and rendering](#Asynchronous-support)
 
 -   Typescript support
 
@@ -97,7 +97,7 @@ Multiple `<Case>` components for the same `value` case are also possible:
 </Switch>
 ```
 
-The `value` prop also supports callback functions - the switch automatically invokes the function and will use the result for `<Case>` matching. [Asynchronous values and functions](##Asynchronous-support) are also supported:
+The `value` prop also supports callback functions - the switch automatically invokes the function and will use the result for `<Case>` matching. [Asynchronous values and functions](#Asynchronous-support) are also supported:
 
 ```jsx
 <Switch value={() => getUserStatus()}>
@@ -137,7 +137,7 @@ As with the `<Case>` and `<Default>` components, multiple `<Else>` components ar
 </If>
 ```
 
-Like the `value` propr for `<Switch>`, the `condition` prop also supports callback functions as well as [promises](##Asynchronous-support):
+Like the `value` propr for `<Switch>`, the `condition` prop also supports callback functions as well as [promises](#Asynchronous-support):
 
 ```jsx
 <If condition={() => isLoggedIn()}>
