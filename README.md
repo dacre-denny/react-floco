@@ -216,12 +216,12 @@ The `<If>` component supports asynchronous rendering in the same way:
 
 ## API
 
-| Component | Prop      | Type           | Required | Description                                                                                                                                                                                                                                                                                                                                                                            |
+| Component | Prop      | Type           | Required | Description
 | --------- | --------- | -------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Switch    | value     | object         | yes      | Specifies the value that Case children will be matched against. If a function is specified, the result of that function call is used for Case matching. |
-| Case      | for       | object         | yes      | The value that this Case is rendered for.                                                                                                                                                                                                                                                                                                                                                   |
-| If        | condition | bool, function | yes      | Determines if the content of the If component is rendered. The component is rendered if a truthy value, or a function that returns a truthy value, is specified. |
-| Repeat    | times     | number         | yes      | The number of times that children are rendered.                                                                                                                                                                                                                                                                                                                              |
+| `<Switch>`    | `value`     | object         | yes      | Specifies the value that Case children will be matched against. If a function is specified, then it is invoked during rendering and the result is used for matching. |
+| `<Case>`      | `for`       | object         | yes      | The value that this case is rendered for. |
+| `<If>`        | `condition` | bool, function | yes      | Determines if the content of the component is rendered. The component is rendered if a truthy value or a function that returns a truthy value, is specified. |
+| `<Repeat>`    | `times`     | number         | yes      | The number of times that children are rendered. |
 
 ## Run tests
 
