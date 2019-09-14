@@ -1,6 +1,6 @@
 {
   "name": "react-floco",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Conditional rendering helpers for react",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -26,6 +26,11 @@
   },
   "keywords": [
     "react",
+    "control flow",
+    "declarative",
+    "conditional",
+    "switch",
+    "case",
     "rendering"
   ],
   "author": "Dacre Denny",
