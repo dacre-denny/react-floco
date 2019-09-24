@@ -1,4 +1,4 @@
-FROM node:8
+FROM node:8-alpine
 
 # Install global packages
 RUN npm install -g http-server \

@@ -137,7 +137,7 @@ As with the `<Case>` and `<Default>` components, multiple `<Else>` components ar
 </If>
 ```
 
-Like the `value` propr for `<Switch>`, the `condition` prop also supports callback functions as well as [promises](#Asynchronous-support):
+Like the `value` prop for `<Switch>`, the `condition` prop also supports callback functions as well as [promises](#Asynchronous-support):
 
 ```jsx
 <If condition={() => isLoggedIn()}>
@@ -193,7 +193,7 @@ If an asynchronous `value` is rejected then any `<Default>` blocks that are pres
 </Switch>
 ```
 
-The `<Loading>` component can be used in tandem with asynchronous rendering. The `<Loading>` component(s) are only rendered if the `value` prop's `Promise` is in a pending state:
+The `<Loading>` component can be used in tandem with asynchronous rendering. The `<Loading>` component(s) are only rendered if the `value` props `Promise` is in a pending state:
 
 ```jsx
 <Switch value={fetchEmotion}>
