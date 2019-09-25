@@ -25,8 +25,8 @@ npm install --save react-floco
 ```jsx
 import { Switch, Case, Default } from 'react-floco';
 
-/* 
-Renders a status based on color 
+/** 
+* Renders a status based on color 
 */
 function StatusFromColor (props) {
 
