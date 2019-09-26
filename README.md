@@ -2,6 +2,9 @@
 <p align="center">Declarative flow control library for React</p>
 
 <p align="center">
+  <a href="https://badge.fury.io/js/react-floco">
+    <img src="https://badge.fury.io/js/react-floco.svg" alt="npm version" height="18">
+  </a>
   <a href="https://travis-ci.org/dacre-denny/react-floco">
     <img src="https://travis-ci.org/dacre-denny/react-floco.svg?branch=master" alt="build">
   </a>
@@ -11,7 +14,9 @@
   <a href="https://www.npmjs.com/package/react-floco">
     <img src="https://img.shields.io/npm/dm/react-floco" alt="Downloads">
   </a>
-  <a href="https://www.codacy.com?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dacre-denny/react-floco&amp;utm_campaign=Badge_Grade"><img src="https://api.codacy.com/project/badge/Grade/ddc6850a2f2b4f94a621ab40ce22e557"/></a>
+  <a href="https://www.codacy.com?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dacre-denny/react-floco&amp;utm_campaign=Badge_Grade">
+    <img src="https://api.codacy.com/project/badge/Grade/ddc6850a2f2b4f94a621ab40ce22e557"/>
+  </a>
 </p>
 
 ---
