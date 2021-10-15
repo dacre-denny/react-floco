@@ -36,7 +36,9 @@ describe("The Helpers module", (): void => {
     });
 
     it("Should return result of function invocation if value is function", (): void => {
-      const mockFunction = (): void => {};
+      const mockFunction = (): void => {
+        console.log("Function called");
+      };
 
       assert.equal(extractValue((): number => 1), 1);
       assert.equal(extractValue((): string => "foo"), "foo");

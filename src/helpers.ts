@@ -20,7 +20,7 @@ export const isFunction = (value: unknown): boolean => {
  * @param value
  */
 export const extractValue = <T extends TypedValue>(value: FunctionOrValue<T>): TypedValue => {
-  return isFunction(value) ? (value as Function)() : value;
+  return isFunction(value) ? (value as (() => T))() : value;
 };
 
 /**
